@@ -27,13 +27,22 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
 void copy_to_dst(const char* from, const char* to, char** dst, const char* dstend);
 void convert_path(const char* from, const char* to, path_type type, char** dst, const char* dstend);
 
+//Transformations
+//SIMPLE_WINDOWS_PATH converter. Copy as is. Hold C:\Something\like\this
 void swp_convert(const char* from, const char* to, char** dst, const char* dstend);
+//ESCAPE_WINDOWS_PATH converter. Turn backslashes to slashes and skip first /. Hold /C:\Somethind\like\this
 void ewp_convert(const char* from, const char* to, char** dst, const char* dstend);
+//WINDOWS_PATH_LIST converter. Copy as is. Hold /something/like/this;
 void wpl_convert(const char* from, const char* to, char** dst, const char* dstend);
+//UNC convert converter. Copy as is. Hold //somethig/like/this
 void unc_convert(const char* from, const char* to, char** dst, const char* dstend);
+//ESCAPED_PATH converter. Turn backslashes to slashes and skip first /. Hold //something\like\this
 void ep_convert(const char* from, const char* to, char** dst, const char* dstend);
+//ROOTED_PATH converter. Prepend root dir to front. Hold /something/like/this
 void rp_convert(const char* from, const char* to, char** dst, const char* dstend);
+//URL converter. Copy as is.
 void url_convert(const char* from, const char* to, char** dst, const char* dstend);
+//POSIX_PATH_LIST. Hold x::x/y:z
 void ppl_convert(const char* from, const char* to, char** dst, const char* dstend);
 
 const char* convert(char *dst, size_t dstlen, const char *src) {
