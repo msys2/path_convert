@@ -34,6 +34,7 @@ static const test_data datas[] = {
     ,{"-w -- INSTALL_ROOT=C:\\Test\\ports64", "-w -- INSTALL_ROOT=C:\\Test\\ports64"} // 16
     ,{"-IC:/Test/ports64", "-IC:/Test/ports64"} // 17
     ,{"-g -O2 -I/foo -L/foo PREFIX=/foo", "-g -O2 -IC:/msys2/foo -LC:/msys2/foo PREFIX=C:/msys2/foo"}
+    ,{"-g -O2 -I/foo -L'/foo bar/boo' PREFIX='/foo bar/boo'", "-g -O2 -IC:/msys2/foo -L'C:/msys2/foo bar/boo' PREFIX='C:/msys2/foo bar/boo'"}
     ,{"'C:\\foo\\bar'", "'C:\\foo\\bar'"} // 0
     ,{"'/foo/bar;'", "'/foo/bar;'"} // 1
     ,{"'//foobar'", "'/foobar'"} // 2

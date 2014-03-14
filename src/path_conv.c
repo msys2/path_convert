@@ -67,8 +67,13 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
     char* dstend = dst + dstlen;
 
     int prev_was_space = 0;
+    int in_string = false;
+
     for (;*srcit!= '\0'; ++srcit) {
-        if (isspace(*srcit)) {
+        if (*srcit == '\'' || *srcit == '"') {
+            in_string = !in_string;
+        }
+        if (isspace(*srcit) && !in_string) {
             if (prev_was_space) {
                 continue;
             }
@@ -164,11 +169,18 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
 
     int starts_with_minus = (*it == '-');
 
-    if (*it == '-' && *(it + 2) == '/') {
-        it += 2;
-        result = ROOTED_PATH;
-    }
+    if (starts_with_minus) {
+        char n2 = *(it + 2);
+        char n3 = *(it + 3);
 
+        if (n2 == '/') {
+            it += 2;
+            result = ROOTED_PATH;
+        } else if ((n2 == '\'' || n2 == '"') && n3 == '/') {
+            it += 3;
+            result = ROOTED_PATH;
+        }
+    }
 
     int not_starte_with_spec = recurse == 0
                                 ? !is_spec_start_symbl(*it)
