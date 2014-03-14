@@ -22,15 +22,18 @@ static const test_data datas[] = {
     ,{"-foo,/bar", "-foo,C:/msys2/bar"} // 7
     ,{"-I/foo,/bar", "-I/foo,C:/msys2/bar"} // 8
     ,{"-I/foo", "-IC:/msys2/foo"} // 9
+    ,{"-L/foo", "-LC:/msys2/foo"} // 9
     ,{"/", "C:/msys2"} // 10
     ,{"/..", "/.."} // 11
     ,{"x:x:/x", "x:x:/x"} // 12
     ,{"x::x:/x", "x;x;C:\\msys2\\x"} // 13
     ,{"x::x/z:x", "x;x\\z;x"} // 14
     ,{"x::x//:z:x", "x;x//:z;x"} // 14
+    ,{"/tmp:/tmp", "C:\\msys2\\tmp;C:\\msys2\\tmp"} // 14
     ,{"-w -- INSTALL_ROOT=C:/Test/ports64", "-w -- INSTALL_ROOT=C:/Test/ports64"} // 15
     ,{"-w -- INSTALL_ROOT=C:\\Test\\ports64", "-w -- INSTALL_ROOT=C:\\Test\\ports64"} // 16
     ,{"-IC:/Test/ports64", "-IC:/Test/ports64"} // 17
+    ,{"-g -O2 -I/foo -L/foo PREFIX=/foo", "-g -O2 -IC:/msys2/foo -LC:/msys2/foo PREFIX=C:/msys2/foo"}
     ,{"'C:\\foo\\bar'", "'C:\\foo\\bar'"} // 0
     ,{"'/foo/bar;'", "'/foo/bar;'"} // 1
     ,{"'//foobar'", "'/foobar'"} // 2
