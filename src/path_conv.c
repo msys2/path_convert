@@ -45,13 +45,13 @@ void url_convert(const char* from, const char* to, char** dst, const char* dsten
 //POSIX_PATH_LIST. Hold x::x/y:z
 void ppl_convert(const char* from, const char* to, char** dst, const char* dstend);
 
-void sub_convert(const char** from, const char* to, char** dst, const char* dstend, char end_with) {
-    const char* copy_from = *from;
-    path_type type = find_path_start_and_type(from, false, to);
+void sub_convert(const char* from, const char* to, char** dst, const char* dstend, char end_with) {
+    const char* copy_from = from;
+    path_type type = find_path_start_and_type(&from, false, to);
 
     if (type != NONE) {
-        copy_to_dst(copy_from, *from, dst, dstend);
-        convert_path(*from, to, type, dst, dstend);
+        copy_to_dst(copy_from, from, dst, dstend);
+        convert_path(from, to, type, dst, dstend);
     }
 
     if (*dst != dstend) {
@@ -68,22 +68,22 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
 
     int prev_was_space = 0;
     for (;*srcit!= '\0'; ++srcit) {
-        if (*srcit == ' ') {
+        if (isspace(*srcit)) {
             if (prev_was_space) {
                 continue;
             }
 
             prev_was_space = true;
-            sub_convert(&srcbeg, srcit, &dstit, dstend, ' ');
+            sub_convert(srcbeg, srcit, &dstit, dstend, ' ');
         }
 
-        if (*srcit != ' ' && prev_was_space) {
+        if (!isspace(*srcit) && prev_was_space) {
             prev_was_space = false;
             srcbeg = srcit;
         }
     }
 
-    sub_convert(&srcbeg, srcit, &dstit, dstend, '\0');
+    sub_convert(srcbeg, srcit, &dstit, dstend, '\0');
 
     return dst;
 }
