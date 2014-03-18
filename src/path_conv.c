@@ -221,7 +221,11 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
             it2 += 1;
             ch = *it2;
             if (ch == '/' || ch == ':' || ch == '.') {
-                return POSIX_PATH_LIST;
+                if (ch == '/' && *(it2 + 1) == '/') {
+                    return URL;
+                } else {
+                    return POSIX_PATH_LIST;
+                }
             } else {
                 return SIMPLE_WINDOWS_PATH;
             }
@@ -336,7 +340,7 @@ void ppl_convert(const char** from, const char* to, char** dst, const char* dste
             if (prev_was_simc) {
                 continue;
             }
-            if (beg + 2 < it && *(it - 2) == '/' && *(it - 1) == '/') {
+            if (*(it + 1) == '/' && *(it + 2) == '/') {
                 is_url = 1;
                 continue;
             }

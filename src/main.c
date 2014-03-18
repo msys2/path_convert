@@ -29,12 +29,14 @@ static const test_data datas[] = {
     ,{"x:x:/x", "x:x:/x"} // 12
     ,{"x::x:/x", "x;x;C:\\msys2\\x"} // 13
     ,{"x::x/z:x", "x;x\\z;x"} // 14
-    ,{"x::x//:z:x", "x;x//:z;x"} // 14
     ,{"x::/x z:x", "x;C:\\msys2\\x z:x"} // 14
     ,{"'x::/x z:x'", "'x;C:\\msys2\\x z;x'"} // 14
     ,{"/dev/null", "null"} // 14
     ,{"'/dev/null'", "'null'"} // 14
     ,{"/tmp:/tmp", "C:\\msys2\\tmp;C:\\msys2\\tmp"} // 14
+    ,{"'/tmp:/tmp'", "'C:\\msys2\\tmp;C:\\msys2\\tmp'"} // 14
+    ,{"'/bin:/Program Files:/lib'", "'C:\\msys2\\bin;C:\\msys2\\Program Files;C:\\msys2\\lib'"}
+    ,{"'-L/opt /bin'", "'-LC:/msys2/opt C:/msys2/bin'"}
     ,{"-w -- INSTALL_ROOT=C:/Test/ports64", "-w -- INSTALL_ROOT=C:/Test/ports64"} // 15
     ,{"-w -- INSTALL_ROOT=C:\\Test\\ports64", "-w -- INSTALL_ROOT=C:\\Test\\ports64"} // 16
     ,{"-IC:/Test/ports64", "-IC:/Test/ports64"} // 17
@@ -57,6 +59,10 @@ static const test_data datas[] = {
     ,{"'-w -- INSTALL_ROOT=C:/Test/ports64'", "'-w -- INSTALL_ROOT=C:/Test/ports64'"} // 15
     ,{"'-w -- INSTALL_ROOT=C:\\Test\\ports64'", "'-w -- INSTALL_ROOT=C:\\Test\\ports64'"} // 16
     ,{"'-IC:/Test/ports64'", "'-IC:/Test/ports64'"} // 17
+    ,{"http://google.ru", "http://google.ru"}
+    ,{"'http://google.ru'", "'http://google.ru'"}
+    ,{"'-I/foo,http://google.ru'", "'-I/foo,http://google.ru'"} // 8
+    ,{"'x::http://google.ru:x'", "'x;http://google.ru;x'"} // 8
     ,{0, 0}
 };
 
