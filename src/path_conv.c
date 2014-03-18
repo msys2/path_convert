@@ -5,8 +5,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <unistd.h>
-
 static const char* ROOT_PATH = "C:/msys2";
 
 static const int true = 1;
@@ -283,12 +281,24 @@ void ep_convert(const char** from, const char* to, char** dst, const char* dsten
 }
 
 void rp_convert(const char** from, const char* to, char** dst, const char* dstend) {
-    if (is_special_posix_path(*from, to, dst, dstend)) {
-        return;
+    const char* it = *from;
+    const char* real_to = to;
+
+    if (*real_to == '\0')  {
+        real_to -= 1;
+        if (*real_to != '\'' && *real_to != '"') {
+            real_to += 1;
+        }
     }
 
-    const char* it = *from;
-    posix_to_win32_path(it, to, dst, dstend);
+    if (!is_special_posix_path(*from, real_to, dst, dstend)) {
+        posix_to_win32_path(it, real_to, dst, dstend);
+    }
+
+    if (real_to != to) {
+        **dst = *real_to;
+        *dst += 1;
+    }
 }
 
 void url_convert(const char** from, const char* to, char** dst, const char* dstend) {
@@ -357,14 +367,14 @@ int is_special_posix_path(const char* from, const char* to, char** dst, const ch
     return false;
 }
 
-void posix_to_win32_path(const char* it, const char* to, char** dst, const char* dstend) {
+void posix_to_win32_path(const char* from, const char* to, char** dst, const char* dstend) {
     copy_to_dst(ROOT_PATH, NULL, dst, dstend);
 
-    for (; (*it != '\0' && it != to) && (*dst != dstend); ++it, ++(*dst)) {
-        if (*it == '\\') {
+    for (; (*from != '\0' && from != to) && (*dst != dstend); ++from, ++(*dst)) {
+        if (*from == '\\') {
             **dst = '/';
         } else {
-            **dst = *it;
+            **dst = *from;
         }
     }
 }
