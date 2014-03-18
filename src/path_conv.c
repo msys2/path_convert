@@ -5,6 +5,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include <unistd.h>
+
 static const char* ROOT_PATH = "C:/msys2";
 
 static const int true = 1;
@@ -22,40 +24,53 @@ typedef enum PATH_TYPE_E {
     URL,
 } path_type;
 
+int is_special_posix_path(const char* from, const char* to, char** dst, const char* dstend);
+void posix_to_win32_path(const char* from, const char* to, char** dst, const char* dstend);
+
 
 path_type find_path_start_and_type(const char** src, int recurse, const char* end);
 void copy_to_dst(const char* from, const char* to, char** dst, const char* dstend);
-void convert_path(const char* from, const char* to, path_type type, char** dst, const char* dstend);
+void convert_path(const char** from, const char* to, path_type type, char** dst, const char* dstend);
 
 //Transformations
 //SIMPLE_WINDOWS_PATH converter. Copy as is. Hold C:\Something\like\this
-void swp_convert(const char* from, const char* to, char** dst, const char* dstend);
+void swp_convert(const char** from, const char* to, char** dst, const char* dstend);
 //ESCAPE_WINDOWS_PATH converter. Turn backslashes to slashes and skip first /. Hold /C:\Somethind\like\this
-void ewp_convert(const char* from, const char* to, char** dst, const char* dstend);
+void ewp_convert(const char** from, const char* to, char** dst, const char* dstend);
 //WINDOWS_PATH_LIST converter. Copy as is. Hold /something/like/this;
-void wpl_convert(const char* from, const char* to, char** dst, const char* dstend);
+void wpl_convert(const char** from, const char* to, char** dst, const char* dstend);
 //UNC convert converter. Copy as is. Hold //somethig/like/this
-void unc_convert(const char* from, const char* to, char** dst, const char* dstend);
+void unc_convert(const char** from, const char* to, char** dst, const char* dstend);
 //ESCAPED_PATH converter. Turn backslashes to slashes and skip first /. Hold //something\like\this
-void ep_convert(const char* from, const char* to, char** dst, const char* dstend);
+void ep_convert(const char** from, const char* to, char** dst, const char* dstend);
 //ROOTED_PATH converter. Prepend root dir to front. Hold /something/like/this
-void rp_convert(const char* from, const char* to, char** dst, const char* dstend);
+void rp_convert(const char** from, const char* to, char** dst, const char* dstend);
 //URL converter. Copy as is.
-void url_convert(const char* from, const char* to, char** dst, const char* dstend);
+void url_convert(const char** from, const char* to, char** dst, const char* dstend);
 //POSIX_PATH_LIST. Hold x::x/y:z
-void ppl_convert(const char* from, const char* to, char** dst, const char* dstend);
+void ppl_convert(const char** from, const char* to, char** dst, const char* dstend);
 
-void sub_convert(const char* from, const char* to, char** dst, const char* dstend, char end_with) {
-    const char* copy_from = from;
-    path_type type = find_path_start_and_type(&from, false, to);
+
+void find_end_of_posix_list(const char** to, int in_string) {
+    for (; **to != '\0' && (in_string ? (**to != in_string) : **to != ' '); ++*to) {
+    }
+}
+
+void sub_convert(const char** from, const char** to, char** dst, const char* dstend, char end_with, int in_string) {
+    const char* copy_from = *from;
+    path_type type = find_path_start_and_type(from, false, *to);
+
+    if (type == POSIX_PATH_LIST) {
+        find_end_of_posix_list(to, in_string);
+    }
 
     if (type != NONE) {
-        copy_to_dst(copy_from, from, dst, dstend);
-        convert_path(from, to, type, dst, dstend);
+        copy_to_dst(copy_from, *from, dst, dstend);
+        convert_path(from, *to, type, dst, dstend);
     }
 
     if (*dst != dstend) {
-        **dst = end_with;
+        **dst = (in_string && type == POSIX_PATH_LIST) ? in_string : end_with;
         *dst += 1;
     }
 }
@@ -71,15 +86,21 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
 
     for (;*srcit!= '\0'; ++srcit) {
         if (*srcit == '\'' || *srcit == '"') {
-            in_string = !in_string;
+            if (in_string == *srcit) {
+                in_string = 0;
+            } else {
+                in_string = *srcit;
+            }
+            continue;
         }
-        if (isspace(*srcit) && !in_string) {
+
+        if (isspace(*srcit)) {
             if (prev_was_space) {
                 continue;
             }
 
             prev_was_space = true;
-            sub_convert(srcbeg, srcit, &dstit, dstend, ' ');
+            sub_convert(&srcbeg, &srcit, &dstit, dstend, ' ', in_string);
         }
 
         if (!isspace(*srcit) && prev_was_space) {
@@ -88,7 +109,7 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
         }
     }
 
-    sub_convert(srcbeg, srcit, &dstit, dstend, '\0');
+    sub_convert(&srcbeg, &srcit, &dstit, dstend, '\0', in_string);
 
     return dst;
 }
@@ -100,7 +121,7 @@ void copy_to_dst(const char* from, const char* to, char** dst, const char* dsten
 }
 
 int is_spec_start_symbl(char ch) {
-    return (ch == '-') || (ch == '"') || (ch == '\'') || (ch == '@');
+    return (ch == '-')  || (ch == '@');
 }
 
 const char** move(const char** p, int count) {
@@ -198,7 +219,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
             return find_path_start_and_type(src, true, end);
         }
 
-        if (ch == ':' && not_starte_with_spec) {
+        if (ch == ':' && not_starte_with_spec && !starts_with_minus) {
             it2 += 1;
             ch = *it2;
             if (ch == '/' || ch == ':' || ch == '.') {
@@ -217,7 +238,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
     return SIMPLE_WINDOWS_PATH;
 }
 
-void convert_path(const char* from, const char* to, path_type type, char** dst, const char* dstend) {
+void convert_path(const char** from, const char* to, path_type type, char** dst, const char* dstend) {
     switch(type) {
         case SIMPLE_WINDOWS_PATH: swp_convert(from, to, dst, dstend); break;
         case ESCAPE_WINDOWS_PATH: ewp_convert(from, to, dst, dstend); break;
@@ -233,20 +254,21 @@ void convert_path(const char* from, const char* to, path_type type, char** dst, 
     }
 }
 
-void swp_convert(const char* from, const char* to, char** dst, const char* dstend) {
-    copy_to_dst(from, to, dst, dstend);
+void swp_convert(const char** from, const char* to, char** dst, const char* dstend) {
+    copy_to_dst(*from, to, dst, dstend);
 }
 
-void ewp_convert(const char* from, const char* to, char** dst, const char* dstend) {
-    unc_convert(from + 1, to, dst, dstend);
+void ewp_convert(const char** from, const char* to, char** dst, const char* dstend) {
+    *from += 1;
+    unc_convert(from, to, dst, dstend);
 }
 
-void wpl_convert(const char* from, const char* to, char** dst, const char* dstend) {
+void wpl_convert(const char** from, const char* to, char** dst, const char* dstend) {
     swp_convert(from, to, dst, dstend);
 }
 
-void unc_convert(const char* from, const char* to, char** dst, const char* dstend) {
-    const char* it = from;
+void unc_convert(const char** from, const char* to, char** dst, const char* dstend) {
+    const char* it = *from;
     for (; (*it != '\0' && it != to) && (*dst != dstend); ++it, ++(*dst)) {
         if (*it == '\\') {
             **dst = '/';
@@ -256,44 +278,27 @@ void unc_convert(const char* from, const char* to, char** dst, const char* dsten
     }
 }
 
-void ep_convert(const char* from, const char* to, char** dst, const char* dstend) {
+void ep_convert(const char** from, const char* to, char** dst, const char* dstend) {
     ewp_convert(from, to, dst, dstend);
 }
 
-void rp_convert(const char* from, const char* to, char** dst, const char* dstend) {
-    copy_to_dst(ROOT_PATH, NULL, dst, dstend);
-
-    const char* it = from;
-    if (*(it + 1) != '\0' && *(it + 1) != '\'' && *(it + 1) != '"') {
-        for (; (*it != '\0' && it != to) && (*dst != dstend); ++it, ++(*dst)) {
-            if (*it == '\\') {
-                **dst = '/';
-            } else {
-                **dst = *it;
-            }
-        }
-    } else {
-        it += 1;
+void rp_convert(const char** from, const char* to, char** dst, const char* dstend) {
+    if (is_special_posix_path(*from, to, dst, dstend)) {
+        return;
     }
 
-    if ((*dst != dstend) && (*it != '\0' && it != to)) {
-        char ch = *it;
-        if (ch == '\'' || ch == '"') {
-            **dst = ch;
-            *dst += 1;
-            it += 1;
-        }
-    }
+    const char* it = *from;
+    posix_to_win32_path(it, to, dst, dstend);
 }
 
-void url_convert(const char* from, const char* to, char** dst, const char* dstend) {
+void url_convert(const char** from, const char* to, char** dst, const char* dstend) {
     unc_convert(from, to, dst, dstend);
 }
 
-void subp_convert(const char* from, const char* end, int is_url, char** dst, const char* dstend) {
-    const char* begin = from;
-    path_type type = find_path_start_and_type(&from, 0, end);
-    copy_to_dst(begin, from, dst, dstend);
+void subp_convert(const char** from, const char* end, int is_url, char** dst, const char* dstend) {
+    const char* begin = *from;
+    path_type type = find_path_start_and_type(from, 0, end);
+    copy_to_dst(begin, *from, dst, dstend);
 
     if (type == NONE) {
         return;
@@ -311,22 +316,22 @@ void subp_convert(const char* from, const char* end, int is_url, char** dst, con
     }
 }
 
-void ppl_convert(const char* from, const char* to, char** dst, const char* dstend) {
-    const char* it = from;
+void ppl_convert(const char** from, const char* to, char** dst, const char* dstend) {
+    const char* it = *from;
     const char* beg = it;
     int prev_was_simc = 0;
     int is_url = 0;
-    for (; (*it != '\0') && (*dst != dstend); ++it) {
+    for (; (*it != '\0' && it != to) && (*dst != dstend); ++it) {
         if (*it == ':') {
             if (prev_was_simc) {
                 continue;
             }
-            if (from + 2 < it && *(it - 2) == '/' && *(it - 1) == '/') {
+            if (beg + 2 < it && *(it - 2) == '/' && *(it - 1) == '/') {
                 is_url = 1;
                 continue;
             }
             prev_was_simc = 1;
-            subp_convert(beg, it, is_url, dst, dstend);
+            subp_convert(&beg, it, is_url, dst, dstend);
             is_url = 0;
 
             **dst = ';';
@@ -339,5 +344,27 @@ void ppl_convert(const char* from, const char* to, char** dst, const char* dsten
         }
     }
 
-    subp_convert(beg, it, is_url, dst, dstend);
+    subp_convert(&beg, it, is_url, dst, dstend);
+}
+
+int is_special_posix_path(const char* from, const char* to, char** dst, const char* dstend) {
+    const char dev_null[] = "/dev/null";
+
+    if ((to - from) == (sizeof(dev_null) - 1) && strncmp(from, "/dev/null", to - from) == 0) {
+        copy_to_dst("null", NULL, dst, dstend);
+        return true;
+    }
+    return false;
+}
+
+void posix_to_win32_path(const char* it, const char* to, char** dst, const char* dstend) {
+    copy_to_dst(ROOT_PATH, NULL, dst, dstend);
+
+    for (; (*it != '\0' && it != to) && (*dst != dstend); ++it, ++(*dst)) {
+        if (*it == '\\') {
+            **dst = '/';
+        } else {
+            **dst = *it;
+        }
+    }
 }
