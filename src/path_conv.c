@@ -365,7 +365,7 @@ int is_special_posix_path(const char* from, const char* to, char** dst, const ch
     const char dev_null[] = "/dev/null";
 
     if ((to - from) == (sizeof(dev_null) - 1) && strncmp(from, "/dev/null", to - from) == 0) {
-        copy_to_dst("null", NULL, dst, dstend);
+        copy_to_dst("nul", NULL, dst, dstend);
         return true;
     }
     return false;
