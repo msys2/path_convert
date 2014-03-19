@@ -31,8 +31,8 @@ static const test_data datas[] = {
     ,{"x::x/z:x", "x;x\\z;x"} // 14
     ,{"x::/x z:x", "x;C:\\msys2\\x z:x"} // 14
     ,{"'x::/x z:x'", "'x;C:\\msys2\\x z;x'"} // 14
-    ,{"/dev/null", "null"} // 14
-    ,{"'/dev/null'", "'null'"} // 14
+    ,{"/dev/null", "nul"} // 14
+    ,{"'/dev/null'", "'nul'"} // 14
     ,{"/tmp:/tmp", "C:\\msys2\\tmp;C:\\msys2\\tmp"} // 14
     ,{"'/tmp:/tmp'", "'C:\\msys2\\tmp;C:\\msys2\\tmp'"} // 14
     ,{"'/bin:/Program Files:/lib'", "'C:\\msys2\\bin;C:\\msys2\\Program Files;C:\\msys2\\lib'"}
