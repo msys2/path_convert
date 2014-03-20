@@ -407,7 +407,11 @@ void ppl_convert(const char** from, const char* to, char** dst, const char* dste
         }
     }
 
-    subp_convert(&beg, it, is_url, dst, dstend);
+    if (!prev_was_simc) {
+        subp_convert(&beg, it, is_url, dst, dstend);
+    } else {
+        *dst -= 1;
+    }
 }
 
 int is_special_posix_path(const char* from, const char* to, char** dst, const char* dstend) {

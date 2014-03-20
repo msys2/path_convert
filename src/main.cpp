@@ -71,6 +71,7 @@ static const test_data datas[] = {
     ,{"'x::http://google.ru:x'", "'x;http://google.ru;x'"} // 8
     ,{"", ""}
     ,{"''", "''"}
+    ,{"/usr/local/info:/usr/share/info:/usr/info:", "C:\\msys2\\usr\\local\\info;C:\\msys2\\usr\\share\\info;C:\\msys2\\usr\\info"}
     ,{0, 0}
 };
 
