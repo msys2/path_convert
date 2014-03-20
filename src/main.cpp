@@ -82,10 +82,10 @@ int main() {
     for ( const test_data *it = &datas[0]; it && it->src; ++it ) {
         total += 1;
         const char *path = it->src;
-        const size_t blen = strlen(it->dst)*2;
+        const size_t blen = strlen(it->dst)*2 + 10;
         char *buf = (char*)malloc(blen);
         for (size_t p = 0; p != blen; ++p) {
-            buf[p] = p;
+            buf[p] = p + 1;
         }
 
         const char *res = convert(buf, blen, path);

@@ -107,6 +107,10 @@ void sub_convert(const char** from, const char** to, char** dst, const char* dst
 }
 
 const char* convert(char *dst, size_t dstlen, const char *src) {
+    if (dst == NULL || dstlen == 0 || src == NULL) {
+        return dst;
+    }
+
     const char* srcit = src;
     const char* srcbeg = src;
     char* dstit = dst;
