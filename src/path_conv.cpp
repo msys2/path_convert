@@ -152,10 +152,6 @@ void copy_to_dst(const char* from, const char* to, char** dst, const char* dsten
     }
 }
 
-int is_spec_start_symbl(char ch) {
-    return (ch == '-')  || (ch == '@');
-}
-
 const char** move(const char** p, int count) {
     *p += count;
     return p;
@@ -225,6 +221,8 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
     if (starts_with_minus) {
         char n2 = *(it + 2);
         char n3 = *(it + 3);
+        char n4 = *(it + 4);
+        char n5 = *(it + 5);
 
         if (n2 == '/') {
             it += 2;
@@ -233,11 +231,18 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
             it += 3;
             result = ROOTED_PATH;
         }
+
+        if (isalpha(n2) && n3 == ':' && n4 == '/') {
+            *src = it + 2;
+            return SIMPLE_WINDOWS_PATH;
+        }
+
+        if ((n2 == '\'' || n2 == '"') && isalpha(n3) && n4 == ':' && n5 == '/') {
+            *src = it + 3;
+            return SIMPLE_WINDOWS_PATH;
+        }
     }
 
-    int not_starte_with_spec = recurse == 0
-                                ? !is_spec_start_symbl(*it)
-                                : !is_spec_start_symbl(*(it - 1));
 
     for (const char* it2 = it; *it2 != '\0' && it2 != end; ++it2) {
         char ch = *it2;
@@ -251,7 +256,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
             return find_path_start_and_type(src, true, end);
         }
 
-        if (ch == ':' && not_starte_with_spec && !starts_with_minus) {
+        if (ch == ':') {
             it2 += 1;
             ch = *it2;
             if (ch == '/' || ch == ':' || ch == '.') {

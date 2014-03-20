@@ -40,6 +40,7 @@ static const test_data datas[] = {
     ,{"'/dev/null'", "'nul'"} // 14
     ,{"/tmp:/tmp", "C:\\msys2\\tmp;C:\\msys2\\tmp"} // 14
     ,{"'/tmp:/tmp'", "'C:\\msys2\\tmp;C:\\msys2\\tmp'"} // 14
+    ,{"-L'/tmp:/tmp'", "-L'C:\\msys2\\tmp;C:\\msys2\\tmp'"} // 14
     ,{"'/bin:/Program Files:/lib'", "'C:\\msys2\\bin;C:\\msys2\\Program Files;C:\\msys2\\lib'"}
     ,{"'-L/opt /bin'", "'-LC:/msys2/opt C:/msys2/bin'"}
     ,{"-w -- INSTALL_ROOT=C:/Test/ports64", "-w -- INSTALL_ROOT=C:/Test/ports64"} // 15
