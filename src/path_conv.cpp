@@ -1,14 +1,19 @@
-#include "path_conv.h"
-
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#ifdef __MSYS__
+# include <sys/cygwin.h>
+#endif
 #include <ctype.h>
 
+#include "path_conv.h"
+
+#ifndef __MSYS__
 static const char* ROOT_PATH = "C:/msys2";
 
 static const int true = 1;
 static const int false = 0;
+#endif
 
 typedef enum PATH_TYPE_E {
     NONE = 0,
@@ -365,11 +370,34 @@ int is_special_posix_path(const char* from, const char* to, char** dst, const ch
     const char dev_null[] = "/dev/null";
 
     if ((to - from) == (sizeof(dev_null) - 1) && strncmp(from, "/dev/null", to - from) == 0) {
-        copy_to_dst("null", NULL, dst, dstend);
+        copy_to_dst("nul", NULL, dst, dstend);
         return true;
     }
     return false;
 }
+
+#ifdef __MSYS__
+
+void posix_to_win32_path(const char* from, const char* to, char** dst, const char* dstend) {
+    if ( from != to ) {
+        char *one_path = (char*)alloca(to-from+1);
+        strncpy(one_path, from, to-from);
+        one_path[to-from] = '\0';
+        char win32_path1[PATH_MAX + 1];
+        ssize_t result = cygwin_conv_path(CCP_POSIX_TO_WIN_A|CCP_ABSOLUTE, one_path, win32_path1, PATH_MAX+1);
+        printf("called cygwin_conv_path(CCP_POSIX_TO_WIN_A,%s -> %s, in-size %d, result = %zd\n", one_path, win32_path1, PATH_MAX+1, result);
+        if( result !=0 ) {
+            copy_to_dst(one_path, NULL, dst, dstend);
+        } else {
+            char *win32_path=win32_path1;
+            for (; (*win32_path != '\0') && (*dst != dstend); ++win32_path, ++(*dst)) {
+                **dst = (*win32_path == '\\') ? '/' : *win32_path;
+            }
+        }
+    }
+}
+
+#else
 
 void posix_to_win32_path(const char* from, const char* to, char** dst, const char* dstend) {
     copy_to_dst(ROOT_PATH, NULL, dst, dstend);
@@ -382,3 +410,5 @@ void posix_to_win32_path(const char* from, const char* to, char** dst, const cha
         }
     }
 }
+
+#endif
