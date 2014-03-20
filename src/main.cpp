@@ -24,12 +24,17 @@ static const test_data datas[] = {
     ,{"-I/foo", "-IC:/msys2/foo"} // 9
     ,{"-L/foo", "-LC:/msys2/foo"} // 9
     ,{"-L'/foo /bar'", "-L'C:/msys2/foo C:/msys2/bar'"} // 9
+    ,{"-L'/foo bar'", "-L'C:/msys2/foo bar'"} // 9
+    ,{"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'C:/msys2/foo bar/boo' PREFIX='C:/msys2/foo bar/boo'"}
+    ,{"-L'/foo /bar/boo' PREFIX='/foo /bar/boo'", "-L'C:/msys2/foo C:/msys2/bar/boo' PREFIX='C:/msys2/foo C:/msys2/bar/boo'"}
+    ,{"'/opt /bin'", "'C:/msys2/opt C:/msys2/bin'"}
+    ,{"'/opt files/bin'", "'C:/msys2/opt files/bin'"}
     ,{"/", "C:/msys2/"} // 10
     ,{"/..", "/.."} // 11
     ,{"x:x:/x", "x:x:/x"} // 12
     ,{"x::x:/x", "x;x;C:\\msys2\\x"} // 13
     ,{"x::x/z:x", "x;x\\z;x"} // 14
-    ,{"x::/x z:x", "x;C:\\msys2\\x z:x"} // 14
+    ,{"x::/x z:x", "x;C:\\msys2\\x z;x"} // 14
     ,{"'x::/x z:x'", "'x;C:\\msys2\\x z;x'"} // 14
     ,{"/dev/null", "nul"} // 14
     ,{"'/dev/null'", "'nul'"} // 14

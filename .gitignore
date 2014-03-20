@@ -1,3 +1,4 @@
 *.py*
 build
 *.zip
+path_conv_test.exe

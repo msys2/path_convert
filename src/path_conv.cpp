@@ -10,9 +10,7 @@
 
 #ifndef __MSYS__
 static const char* ROOT_PATH = "C:/msys2";
-
-static const int true = 1;
-static const int false = 0;
+#include <unistd.h>
 #endif
 
 typedef enum PATH_TYPE_E {
@@ -24,7 +22,7 @@ typedef enum PATH_TYPE_E {
     ESCAPED_PATH,
     ROOTED_PATH,
     POSIX_PATH_LIST,
-    URL,
+    URL
 } path_type;
 
 int is_special_posix_path(const char* from, const char* to, char** dst, const char* dstend);
@@ -54,17 +52,46 @@ void url_convert(const char** from, const char* to, char** dst, const char* dste
 void ppl_convert(const char** from, const char* to, char** dst, const char* dstend);
 
 
-void find_end_of_posix_list(const char** to, int in_string) {
-    for (; **to != '\0' && (in_string ? (**to != in_string) : **to != ' '); ++*to) {
+void find_end_of_posix_list(const char** to, int* in_string) {
+    for (; **to != '\0' && (in_string ? (**to != *in_string) : **to != ' '); ++*to) {
+    }
+
+    if (**to == *in_string) {
+        *in_string = 0;
     }
 }
 
-void sub_convert(const char** from, const char** to, char** dst, const char* dstend, char end_with, int in_string) {
+void find_end_of_rooted_path(const char** to, int* in_string) {
+    for (; **to != '\0'; ++*to) {
+        if (*in_string == 0 && **to == ' ') {
+            return;
+        }
+
+        if (**to == *in_string) {
+            *in_string = 0;
+            return;
+        }
+
+        if (**to == '/') {
+            if (*(*to - 1) == ' ') {
+                *to -= 1;
+                return;
+            }
+        }
+    }
+}
+
+void sub_convert(const char** from, const char** to, char** dst, const char* dstend, int* in_string) {
     const char* copy_from = *from;
     path_type type = find_path_start_and_type(from, false, *to);
+    int in_string2 = *in_string;
 
     if (type == POSIX_PATH_LIST) {
-        find_end_of_posix_list(to, in_string);
+        find_end_of_posix_list(to, &in_string2);
+    }
+
+    if (type == ROOTED_PATH) {
+        find_end_of_rooted_path(to, &in_string2);
     }
 
     if (type != NONE) {
@@ -73,9 +100,10 @@ void sub_convert(const char** from, const char** to, char** dst, const char* dst
     }
 
     if (*dst != dstend) {
-        **dst = (in_string && type == POSIX_PATH_LIST) ? in_string : end_with;
+        **dst = **to;
         *dst += 1;
     }
+    *in_string = in_string2;
 }
 
 const char* convert(char *dst, size_t dstlen, const char *src) {
@@ -103,7 +131,8 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
             }
 
             prev_was_space = true;
-            sub_convert(&srcbeg, &srcit, &dstit, dstend, ' ', in_string);
+            sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
+            srcbeg = srcit;
         }
 
         if (!isspace(*srcit) && prev_was_space) {
@@ -112,7 +141,7 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
         }
     }
 
-    sub_convert(&srcbeg, &srcit, &dstit, dstend, '\0', in_string);
+    sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
 
     return dst;
 }
