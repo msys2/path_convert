@@ -115,7 +115,7 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
     int prev_was_space = 0;
     int in_string = false;
 
-    for (;*srcit!= '\0'; ++srcit) {
+    for (; *srcit != '\0'; ++srcit) {
         if (*srcit == '\'' || *srcit == '"') {
             if (in_string == *srcit) {
                 in_string = 0;
@@ -142,6 +142,12 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
     }
 
     sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
+
+    if (dstit - dst < 2) {
+        dstit = dst;
+        copy_to_dst(src, NULL, &dstit, dstend);
+        *dstit = '\0';
+    }
 
     return dst;
 }

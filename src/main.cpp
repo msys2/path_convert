@@ -69,6 +69,8 @@ static const test_data datas[] = {
     ,{"'http://google.ru'", "'http://google.ru'"}
     ,{"'-I/foo,http://google.ru'", "'-I/foo,http://google.ru'"} // 8
     ,{"'x::http://google.ru:x'", "'x;http://google.ru;x'"} // 8
+    ,{"", ""}
+    ,{"''", "''"}
     ,{0, 0}
 };
 
@@ -82,6 +84,9 @@ int main() {
         const char *path = it->src;
         const size_t blen = strlen(it->dst)*2;
         char *buf = (char*)malloc(blen);
+        for (size_t p = 0; p != blen; ++p) {
+            buf[p] = p;
+        }
 
         const char *res = convert(buf, blen, path);
         if ( 0 != strcmp(res, it->dst) ) {
