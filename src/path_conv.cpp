@@ -110,6 +110,18 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
         return dst;
     }
 
+    int need_convert = false;
+    for (const char* it = src; it != '\0'; ++it) {
+        if (*it == '\\' || *it == '/') {
+            need_convert = true;
+            break;
+        }
+    }
+
+    if (!need_convert) {
+        return src;
+    }
+
     const char* srcit = src;
     const char* srcbeg = src;
     char* dstit = dst;
