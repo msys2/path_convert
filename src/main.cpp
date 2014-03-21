@@ -72,10 +72,38 @@ static const test_data datas[] = {
     ,{"", ""}
     ,{"''", "''"}
     ,{"/usr/local/info:/usr/share/info:/usr/info:", "C:\\msys2\\usr\\local\\info;C:\\msys2\\usr\\share\\info;C:\\msys2\\usr\\info"}
+    ,{"as_nl=\r", "as_nl=\r"}
+    ,{"as_nl=\n", "as_nl=\n"}
+    ,{"as_nl= ", "as_nl= "}
+    ,{"as_nl='\r'", "as_nl='\r'"}
+    ,{"as_nl='\n'", "as_nl='\n'"}
+    ,{"as_nl=' '", "as_nl=' '"}
     ,{0, 0}
 };
 
 /***************************************************************************/
+
+const char* escape(const char* str, char* dst) {
+    char* tmp = dst;
+    for (; str != NULL && *str != '\0'; ++str) {
+        switch(*str) {
+            case '\r': *(tmp++) = '\\'; *(tmp++)='r'; break;
+            case '\n': *(tmp++) = '\\'; *(tmp++)='n'; break;
+            case '\b': *(tmp++) = '\\'; *(tmp++)='b'; break;
+            case '\t': *(tmp++) = '\\'; *(tmp++)='t'; break;
+            default:
+                    *(tmp++) = *str;
+        }
+    }
+    *tmp = '\0';
+    return dst;
+}
+
+void litter_buffer(char* buf, size_t len) {
+    for (size_t p = 0; p != len; ++p) {
+        buf[p] = p + 1;
+    }
+}
 
 int main() {
     int passed = 0;
@@ -85,16 +113,19 @@ int main() {
         const char *path = it->src;
         const size_t blen = strlen(it->dst)*2 + 10;
         char *buf = (char*)malloc(blen);
-        for (size_t p = 0; p != blen; ++p) {
-            buf[p] = p + 1;
-        }
+        litter_buffer(buf, blen);
 
         const char *res = convert(buf, blen, path);
         if ( 0 != strcmp(res, it->dst) ) {
-            printf("test %ld failed: src=\"%s\", dst=\"%s\" expect=\"%s\"\n", (it - &datas[0]), path, res, it->dst);
+            char epath[1024];
+            char eres[1024];
+            char edst[1024];
+            printf("test %ld failed: src=\"%s\", dst=\"%s\" expect=\"%s\"\n", (it - &datas[0]), escape(path, epath), escape(res, eres), escape(it->dst, edst));
         } else {
+            char epath[1024];
+            char eres[1024];
             passed += 1;
-            printf("test %ld passed: src=\"%s\", dst=\"%s\"\n", (it - &datas[0]), path, res);
+            printf("test %ld passed: src=\"%s\", dst=\"%s\"\n", (it - &datas[0]), escape(path, epath), escape(res, eres));
         }
 
         free(buf);

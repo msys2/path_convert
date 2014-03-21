@@ -84,18 +84,18 @@ void find_end_of_rooted_path(const char** to, int* in_string) {
 void sub_convert(const char** from, const char** to, char** dst, const char* dstend, int* in_string) {
     const char* copy_from = *from;
     path_type type = find_path_start_and_type(from, false, *to);
-    int in_string2 = *in_string;
 
     if (type == POSIX_PATH_LIST) {
-        find_end_of_posix_list(to, &in_string2);
+        find_end_of_posix_list(to, in_string);
     }
 
     if (type == ROOTED_PATH) {
-        find_end_of_rooted_path(to, &in_string2);
+        find_end_of_rooted_path(to, in_string);
     }
 
+    copy_to_dst(copy_from, *from, dst, dstend);
+
     if (type != NONE) {
-        copy_to_dst(copy_from, *from, dst, dstend);
         convert_path(from, *to, type, dst, dstend);
     }
 
@@ -103,7 +103,6 @@ void sub_convert(const char** from, const char** to, char** dst, const char* dst
         **dst = **to;
         *dst += 1;
     }
-    *in_string = in_string2;
 }
 
 const char* convert(char *dst, size_t dstlen, const char *src) {
@@ -118,6 +117,7 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
 
     int prev_was_space = 0;
     int in_string = false;
+    int in_string2;
 
     for (; *srcit != '\0'; ++srcit) {
         if (*srcit == '\'' || *srcit == '"') {
@@ -135,13 +135,18 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
             }
 
             prev_was_space = true;
-            sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
-            srcbeg = srcit;
+            in_string2 = in_string;
+            sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string2);
+            srcbeg = srcit + 1;
         }
 
         if (!isspace(*srcit) && prev_was_space) {
             prev_was_space = false;
             srcbeg = srcit;
+            if (in_string != in_string2) {
+                srcbeg += 1;
+            }
+            in_string = in_string2;
         }
     }
 
