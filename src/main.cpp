@@ -78,6 +78,7 @@ static const test_data datas[] = {
     ,{"as_nl='\r'", "as_nl='\r'"}
     ,{"as_nl='\n'", "as_nl='\n'"}
     ,{"as_nl=' '", "as_nl=' '"}
+    ,{"C:/Test/ports64", "C:/Test/ports64"}
     ,{0, 0}
 };
 

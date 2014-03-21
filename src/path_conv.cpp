@@ -180,8 +180,11 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
     path_type result = NONE;
 
     if (isalpha(*it) && *(it + 1) == ':') {
-        if ((recurse && *(it + 2) == '/') ||
-            (*(it + 2) == '\\')) {
+        if (*(it + 2) == '\\') {
+            return SIMPLE_WINDOWS_PATH;
+        }
+
+        if (*(it + 2) == '/' && memchr(it + 2, ':', end - (it + 2)) == NULL) {
             return SIMPLE_WINDOWS_PATH;
         }
     }
