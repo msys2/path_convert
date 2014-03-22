@@ -241,7 +241,7 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
     }
 
     int need_convert = false;
-    for (const char* it = src; it != '\0'; ++it) {
+    for (const char* it = src; *it != '\0'; ++it) {
         if (*it == '\\' || *it == '/') {
             need_convert = true;
             break;
