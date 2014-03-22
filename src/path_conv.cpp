@@ -248,14 +248,16 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
         }
     }
 
+    char* dstit = dst;
+    char* dstend = dst + dstlen;
     if (!need_convert) {
-        return src;
+        copy_to_dst(src, NULL, &dstit, dstend);
+        *dstit = '\0';
+        return dst;
     }
 
     const char* srcit = src;
     const char* srcbeg = src;
-    char* dstit = dst;
-    char* dstend = dst + dstlen;
 
     int prev_was_space = 0;
     int in_string = false;
@@ -379,10 +381,10 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
     int starts_with_minus = (*it == '-');
 
     if (starts_with_minus) {
-        char n2 = *(it + 2);
-        char n3 = *(it + 3);
-        char n4 = *(it + 4);
-        char n5 = *(it + 5);
+        char n2 =      *(it + 2);
+        char n3 = n2 ? *(it + 3) : '\0';
+        char n4 = n3 ? *(it + 4) : '\0';
+        char n5 = n4 ? *(it + 5) : '\0';
 
         if (n2 == '/') {
             it += 2;
