@@ -126,6 +126,13 @@
   Affirmer understands and acknowledges that Creative Commons is not a
   party to this document and has no duty or obligation with respect to
   this CC0 or use of the Work.
+
+  Contributions thanks to:
+    niXman <i.nixman@autistici.org>
+    Ely Arzhannikov <iarzhannikov@gmail.com>
+    Alexey Pavlov <alexpux@gmail.com>
+    Ray Donnelly <mingw.android@gmail.com>
+  
 */
 
 #include "path_conv.h"
