@@ -1,10 +1,10 @@
 /*
   The MSYS2 Path conversion source code is licensed under:
-  
+
   CC0 1.0 Universal
-  
+
   Official translations of this legal tool are available
-  
+
   CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
   LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN
   ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS
@@ -13,14 +13,14 @@
   PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM
   THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED
   HEREUNDER.
-  
+
   Statement of Purpose
-  
+
   The laws of most jurisdictions throughout the world automatically
   confer exclusive Copyright and Related Rights (defined below) upon the
   creator and subsequent owner(s) (each and all, an "owner") of an
   original work of authorship and/or a database (each, a "Work").
-  
+
   Certain owners wish to permanently relinquish those rights to a Work
   for the purpose of contributing to a commons of creative, cultural and
   scientific works ("Commons") that the public can reliably and without
@@ -32,7 +32,7 @@
   creative, cultural and scientific works, or to gain reputation or
   greater distribution for their Work in part through the use and
   efforts of others.
-  
+
   For these and/or other purposes and motivations, and without any
   expectation of additional consideration or compensation, the person
   associating CC0 with a Work (the "Affirmer"), to the extent that he or
@@ -41,12 +41,12 @@
   the Work under its terms, with knowledge of his or her Copyright and
   Related Rights in the Work and the meaning and intended legal effect
   of CC0 on those rights.
-  
+
   1. Copyright and Related Rights. A Work made available under CC0 may
   be protected by copyright and related or neighboring rights
   ("Copyright and Related Rights"). Copyright and Related Rights
   include, but are not limited to, the following:
-  
+
   the right to reproduce, adapt, distribute, perform, display,
   communicate, and translate a Work;
   moral rights retained by the original author(s) and/or performer(s);
@@ -64,7 +64,7 @@
   other similar, equivalent or corresponding rights throughout the world
   based on applicable law or treaty, and any national implementations
   thereof.
-  
+
   2. Waiver. To the greatest extent permitted by, but not in
   contravention of, applicable law, Affirmer hereby overtly, fully,
   permanently, irrevocably and unconditionally waives, abandons, and
@@ -82,7 +82,7 @@
   revocation, rescission, cancellation, termination, or any other legal
   or equitable action to disrupt the quiet enjoyment of the Work by the
   public as contemplated by Affirmer's express Statement of Purpose.
-  
+
   3. Public License Fallback. Should any part of the Waiver for any
   reason be judged legally invalid or ineffective under applicable law,
   then the Waiver shall be preserved to the maximum extent permitted
@@ -105,9 +105,9 @@
   the Work or (ii) assert any associated claims and causes of action
   with respect to the Work, in either case contrary to Affirmer's
   express Statement of Purpose.
-  
+
   4. Limitations and Disclaimers.
-  
+
   No trademark or patent rights held by Affirmer are waived, abandoned,
   surrendered, licensed or otherwise affected by this document.
   Affirmer offers the Work as-is and makes no representations or
@@ -132,7 +132,7 @@
     Ely Arzhannikov <iarzhannikov@gmail.com>
     Alexey Pavlov <alexpux@gmail.com>
     Ray Donnelly <mingw.android@gmail.com>
-  
+
 */
 
 #include <stdio.h>
@@ -266,14 +266,14 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
     const char* srcit = src;
     const char* srcbeg = src;
 
-    int prev_was_space = 0;
     int in_string = false;
-    int in_string2;
 
     for (; *srcit != '\0'; ++srcit) {
         if (*srcit == '\'' || *srcit == '"') {
             if (in_string == *srcit) {
-                in_string = 0;
+                if (*(srcit + 1) != in_string) {
+                    in_string = 0;
+                }
             } else {
                 in_string = *srcit;
             }
@@ -281,23 +281,8 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
         }
 
         if (isspace(*srcit)) {
-            if (prev_was_space) {
-                continue;
-            }
-
-            prev_was_space = true;
-            in_string2 = in_string;
-            sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string2);
+            sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
             srcbeg = srcit + 1;
-        }
-
-        if (!isspace(*srcit) && prev_was_space) {
-            prev_was_space = false;
-            srcbeg = srcit;
-            if (in_string != in_string2) {
-                srcbeg += 1;
-            }
-            in_string = in_string2;
         }
     }
 
@@ -327,6 +312,10 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
     const char* it = *src;
 
     if (*it == '\0' || it == end) return NONE;
+
+    if (!isalpha(*it) && *it != '/' && *it != '\\' && *it != ':' && *it != '-') {
+        return find_path_start_and_type(move(src, 1), true, end);
+    }
 
     path_type result = NONE;
 
@@ -375,14 +364,6 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         }
 
         return (double_slashed) ? ESCAPED_PATH : ROOTED_PATH;
-    }
-
-    if (*it == '@') {
-        return find_path_start_and_type(move(src, 1), true, end);
-    }
-
-    if (*it == '"' || *it == '\'') {
-        return find_path_start_and_type(move(src, 1), true, end);
     }
 
     int starts_with_minus = (*it == '-');
