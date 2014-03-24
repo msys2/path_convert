@@ -146,80 +146,102 @@
 typedef struct test_data_t {
     const char *src;
     const char *dst;
+    bool fail;
 } test_data;
 
 static const test_data datas[] = {
-    {"C:\\foo\\bar", "C:\\foo\\bar"} // 0
-    ,{"/foo/bar;", "/foo/bar;"} // 1
-    ,{"//foobar", "/foobar"} // 2
-    ,{"//foo\\bar", "/foo/bar"} // 3
-    ,{"//foo/bar", "//foo/bar"} // 4
-    ,{"/c:\\foo\\bar", "c:/foo/bar"} // 5
-    ,{"foo=/bar", "foo=C:/msys2/bar"} // 6
-    ,{"-foo,/bar", "-foo,C:/msys2/bar"} // 7
-    ,{"-I/foo,/bar", "-I/foo,C:/msys2/bar"} // 8
-    ,{"-I/foo", "-IC:/msys2/foo"} // 9
-    ,{"-L/foo", "-LC:/msys2/foo"} // 9
-    ,{"-L'/foo /bar'", "-L'C:/msys2/foo C:/msys2/bar'"} // 9
-    ,{"-L'/foo bar'", "-L'C:/msys2/foo bar'"} // 9
-    ,{"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'C:/msys2/foo bar/boo' PREFIX='C:/msys2/foo bar/boo'"}
-    ,{"-L'/foo /bar/boo' PREFIX='/foo /bar/boo'", "-L'C:/msys2/foo C:/msys2/bar/boo' PREFIX='C:/msys2/foo C:/msys2/bar/boo'"}
-    ,{"'/opt /bin'", "'C:/msys2/opt C:/msys2/bin'"}
-    ,{"'/opt files/bin'", "'C:/msys2/opt files/bin'"}
-    ,{"/", "C:/msys2/"} // 10
-    ,{"/..", "/.."} // 11
-    ,{"x:x:/x", "x:x:/x"} // 12
-    ,{"x::x:/x", "x;x;C:\\msys2\\x"} // 13
-    ,{"x::x/z:x", "x;x\\z;x"} // 14
-    ,{"x::/x z:x", "x;C:\\msys2\\x z;x"} // 14
-    ,{"'x::/x z:x'", "'x;C:\\msys2\\x z;x'"} // 14
-    ,{"/dev/null", "nul"} // 14
-    ,{"'/dev/null'", "'nul'"} // 14
-    ,{"/tmp:/tmp", "C:\\msys2\\tmp;C:\\msys2\\tmp"} // 14
-    ,{"'/tmp:/tmp'", "'C:\\msys2\\tmp;C:\\msys2\\tmp'"} // 14
-    ,{"-L'/tmp:/tmp'", "-L'C:\\msys2\\tmp;C:\\msys2\\tmp'"} // 14
-    ,{"'/bin:/Program Files:/lib'", "'C:\\msys2\\bin;C:\\msys2\\Program Files;C:\\msys2\\lib'"}
-    ,{"'-L/opt /bin'", "'-LC:/msys2/opt C:/msys2/bin'"}
-    ,{"-w -- INSTALL_ROOT=C:/Test/ports64", "-w -- INSTALL_ROOT=C:/Test/ports64"} // 15
-    ,{"-w -- INSTALL_ROOT=C:\\Test\\ports64", "-w -- INSTALL_ROOT=C:\\Test\\ports64"} // 16
-    ,{"-IC:/Test/ports64", "-IC:/Test/ports64"} // 17
-    ,{"-g -O2 -I/foo -L/foo PREFIX=/foo", "-g -O2 -IC:/msys2/foo -LC:/msys2/foo PREFIX=C:/msys2/foo"}
-    ,{"-g -O2 -I/foo -L'/foo bar/boo' PREFIX='/foo bar/boo'", "-g -O2 -IC:/msys2/foo -L'C:/msys2/foo bar/boo' PREFIX='C:/msys2/foo bar/boo'"}
-    ,{"'C:\\foo\\bar'", "'C:\\foo\\bar'"} // 0
-    ,{"'/foo/bar;'", "'/foo/bar;'"} // 1
-    ,{"'//foobar'", "'/foobar'"} // 2
-    ,{"'//foo\\bar'", "'/foo/bar'"} // 3
-    ,{"'//foo/bar'", "'//foo/bar'"} // 4
-    ,{"'/c:\\foo\\bar'", "'c:/foo/bar'"} // 5
-    ,{"'foo=/bar'", "'foo=C:/msys2/bar'"} // 6
-    ,{"'-foo,/bar'", "'-foo,C:/msys2/bar'"} // 7
-    ,{"'-I/foo,/bar'", "'-I/foo,C:/msys2/bar'"} // 8
-    ,{"'-I/foo'", "'-IC:/msys2/foo'"} // 9
-    ,{"'/'", "'C:/msys2/'"} // 10
-    ,{"'/..'", "'/..'"} // 11
-    ,{"'x:x:/x'", "'x:x:/x'"} // 12
-    //,{"'x::x:/x'", "'x::x:/x'"} // 13 IT TEST FAILS
-    ,{"'-w -- INSTALL_ROOT=C:/Test/ports64'", "'-w -- INSTALL_ROOT=C:/Test/ports64'"} // 15
-    ,{"'-w -- INSTALL_ROOT=C:\\Test\\ports64'", "'-w -- INSTALL_ROOT=C:\\Test\\ports64'"} // 16
-    ,{"'-IC:/Test/ports64'", "'-IC:/Test/ports64'"} // 17
-    ,{"http://google.ru", "http://google.ru"}
-    ,{"'http://google.ru'", "'http://google.ru'"}
-    ,{"'-I/foo,http://google.ru'", "'-I/foo,http://google.ru'"} // 8
-    ,{"'x::http://google.ru:x'", "'x;http://google.ru;x'"} // 8
-    ,{"", ""}
-    ,{"''", "''"}
-    ,{"/usr/local/info:/usr/share/info:/usr/info:", "C:\\msys2\\usr\\local\\info;C:\\msys2\\usr\\share\\info;C:\\msys2\\usr\\info"}
-    ,{"as_nl=\r", "as_nl=\r"}
-    ,{"as_nl=\n", "as_nl=\n"}
-    ,{"as_nl= ", "as_nl= "}
-    ,{"as_nl='\r'", "as_nl='\r'"}
-    ,{"as_nl='\n'", "as_nl='\n'"}
-    ,{"as_nl=' '", "as_nl=' '"}
-    ,{"C:/Test/ports64", "C:/Test/ports64"}
-    ,{"'C:/Test/ports64'", "'C:/Test/ports64'"}
-    ,{"('C:/msys2')", "('C:/msys2')"}
-    ,{"files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n", "files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n"}
-    ,{0, 0}
+    {"C:\\foo\\bar", "C:\\foo\\bar", false} // 0
+    ,{"/foo/bar;", "/foo/bar;", false} // 1
+    ,{"//foobar", "/foobar", false} // 2
+    ,{"//foo\\bar", "/foo/bar", false} // 3
+    ,{"//foo/bar", "//foo/bar", false} // 4
+    ,{"/c:\\foo\\bar", "c:/foo/bar", false} // 5
+    ,{"foo=/bar", "foo=C:/msys2/bar", false} // 6
+    ,{"-foo,/bar", "-foo,C:/msys2/bar", false} // 7
+    ,{"-I/foo,/bar", "-I/foo,C:/msys2/bar", false} // 8
+    ,{"-I/foo", "-IC:/msys2/foo", false} // 9
+    ,{"-L/foo", "-LC:/msys2/foo", false} // 9
+    ,{"-L'/foo /bar'", "-L'C:/msys2/foo C:/msys2/bar'", false} // 9
+    ,{"-L'/foo bar'", "-L'C:/msys2/foo bar'", false} // 9
+    ,{"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'C:/msys2/foo bar/boo' PREFIX='C:/msys2/foo bar/boo'", false}
+    ,{"-L'/foo /bar/boo' PREFIX='/foo /bar/boo'", "-L'C:/msys2/foo C:/msys2/bar/boo' PREFIX='C:/msys2/foo C:/msys2/bar/boo'", false}
+    ,{"'/opt /bin'", "'C:/msys2/opt C:/msys2/bin'", false}
+    ,{"'/opt files/bin'", "'C:/msys2/opt files/bin'", false}
+    ,{"/", "C:/msys2/", false} // 10
+    ,{"/..", "/..", false} // 11
+    ,{"x:x:/x", "x:x:/x", false} // 12
+    ,{"x::x:/x", "x;x;C:\\msys2\\x", false} // 13
+    ,{"x::x/z:x", "x;x\\z;x", false} // 14
+    ,{"x::/x z:x", "x;C:\\msys2\\x z;x", false} // 14
+    ,{"'x::/x z:x'", "'x;C:\\msys2\\x z;x'", false} // 14
+    ,{"/dev/null", "nul", false} // 14
+    ,{"'/dev/null'", "'nul'", false} // 14
+    ,{"/tmp:/tmp", "C:\\msys2\\tmp;C:\\msys2\\tmp", false} // 14
+    ,{"'/tmp:/tmp'", "'C:\\msys2\\tmp;C:\\msys2\\tmp'", false} // 14
+    ,{"-L'/tmp:/tmp'", "-L'C:\\msys2\\tmp;C:\\msys2\\tmp'", false} // 14
+    ,{"'/bin:/Program Files:/lib'", "'C:\\msys2\\bin;C:\\msys2\\Program Files;C:\\msys2\\lib'", false}
+    ,{"'-L/opt /bin'", "'-LC:/msys2/opt C:/msys2/bin'", false}
+    ,{"-w -- INSTALL_ROOT=C:/Test/ports64", "-w -- INSTALL_ROOT=C:/Test/ports64", false} // 15
+    ,{"-w -- INSTALL_ROOT=C:\\Test\\ports64", "-w -- INSTALL_ROOT=C:\\Test\\ports64", false} // 16
+    ,{"-IC:/Test/ports64", "-IC:/Test/ports64", false} // 17
+    ,{"-g -O2 -I/foo -L/foo PREFIX=/foo", "-g -O2 -IC:/msys2/foo -LC:/msys2/foo PREFIX=C:/msys2/foo", false}
+    ,{"-g -O2 -I/foo -L'/foo bar/boo' PREFIX='/foo bar/boo'", "-g -O2 -IC:/msys2/foo -L'C:/msys2/foo bar/boo' PREFIX='C:/msys2/foo bar/boo'", false}
+    ,{"'C:\\foo\\bar'", "'C:\\foo\\bar'", false} // 0
+    ,{"'/foo/bar;'", "'/foo/bar;'", false} // 1
+    ,{"'//foobar'", "'/foobar'", false} // 2
+    ,{"'//foo\\bar'", "'/foo/bar'", false} // 3
+    ,{"'//foo/bar'", "'//foo/bar'", false} // 4
+    ,{"'/c:\\foo\\bar'", "'c:/foo/bar'", false} // 5
+    ,{"'foo=/bar'", "'foo=C:/msys2/bar'", false} // 6
+    ,{"'-foo,/bar'", "'-foo,C:/msys2/bar'", false} // 7
+    ,{"'-I/foo,/bar'", "'-I/foo,C:/msys2/bar'", false} // 8
+    ,{"'-I/foo'", "'-IC:/msys2/foo'", false} // 9
+    ,{"'/'", "'C:/msys2/'", false} // 10
+    ,{"'/..'", "'/..'", false} // 11
+    ,{"'x:x:/x'", "'x:x:/x'", false} // 12
+    //,{"'x::x:/x'", "'x::x:/x'", false} // 13 IT TEST FAILS
+    ,{"'-w -- INSTALL_ROOT=C:/Test/ports64'", "'-w -- INSTALL_ROOT=C:/Test/ports64'", false} // 15
+    ,{"'-w -- INSTALL_ROOT=C:\\Test\\ports64'", "'-w -- INSTALL_ROOT=C:\\Test\\ports64'", false} // 16
+    ,{"'-IC:/Test/ports64'", "'-IC:/Test/ports64'", false} // 17
+    ,{"http://google.ru", "http://google.ru", false}
+    ,{"'http://google.ru'", "'http://google.ru'", false}
+    ,{"'-I/foo,http://google.ru'", "'-I/foo,http://google.ru'", false} // 8
+    ,{"'x::http://google.ru:x'", "'x;http://google.ru;x'", false} // 8
+    ,{"", "", false}
+    ,{"''", "''", false}
+    ,{"/usr/local/info:/usr/share/info:/usr/info:", "C:\\msys2\\usr\\local\\info;C:\\msys2\\usr\\share\\info;C:\\msys2\\usr\\info", false}
+    ,{"as_nl=\r", "as_nl=\r", false}
+    ,{"as_nl=\n", "as_nl=\n", false}
+    ,{"as_nl= ", "as_nl= ", false}
+    ,{"as_nl='\r'", "as_nl='\r'", false}
+    ,{"as_nl='\n'", "as_nl='\n'", false}
+    ,{"as_nl=' '", "as_nl=' '", false}
+    ,{"C:/Test/ports64", "C:/Test/ports64", false}
+    ,{"'C:/Test/ports64'", "'C:/Test/ports64'", false}
+    ,{"('C:/msys2')", "('C:/msys2')", false}
+    ,{"files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n", "files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n", false}
+    ,{
+"import sys\n"
+"import os\n"
+"\n"
+"def main():\n"
+"    print sys.argv\n"
+"    print os.path.exists('some/path')\n"
+"    print os.path.exists('/some/path')\n"
+"\n"
+"if __name__ == '__main__':\n"
+"    main()\n",
+"import sys\n"
+"import os\n"
+"\n"
+"def main():\n"
+"    print sys.argv\n"
+"    print os.path.exists('some/path')\n"
+"    print os.path.exists('C:/msys2/some/path')\n"
+"\n"
+"if __name__ == '__main__':\n"
+"    main()\n", true}
+    ,{0, 0, false}
 };
 
 /***************************************************************************/
@@ -257,11 +279,14 @@ int main() {
         litter_buffer(buf, blen);
 
         const char *res = convert(buf, blen, path);
-        if ( 0 != strcmp(res, it->dst) ) {
+        if ( 0 != strcmp(res, it->dst)) {
             char epath[1024];
             char eres[1024];
             char edst[1024];
             printf("test %ld failed: src=\"%s\", dst=\"%s\" expect=\"%s\"\n", (it - &datas[0]), escape(path, epath), escape(res, eres), escape(it->dst, edst));
+            if (it->fail) {
+                passed += 1;
+            }
         } else {
             char epath[1024];
             char eres[1024];
