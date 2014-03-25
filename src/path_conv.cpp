@@ -313,7 +313,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
 
     if (*it == '\0' || it == end) return NONE;
 
-    if (!isalpha(*it) && *it != '/' && *it != '\\' && *it != ':' && *it != '-') {
+    if (!isalpha(*it) && *it != '/' && *it != '\\' && *it != ':' && *it != '-' && *it != '.') {
         return find_path_start_and_type(move(src, 1), true, end);
     }
 
@@ -329,6 +329,10 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         }
     }
 
+    if (*it == '.' && (*(it + 1) == '.' || *(it + 1) == '/')) {
+        return SIMPLE_WINDOWS_PATH;
+    }
+    
     if (*it == '/') {
         it += 1;
 
