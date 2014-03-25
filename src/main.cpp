@@ -219,6 +219,10 @@ static const test_data datas[] = {
     ,{"C:/Test/ports64", "C:/Test/ports64", false}
     ,{"'C:/Test/ports64'", "'C:/Test/ports64'", false}
     ,{"('C:/msys2')", "('C:/msys2')", false}
+    ,{"--implib=./libblah.a", "--implib=./libblah.a", false}
+    ,{"'--implib=./libblah.a'", "'--implib=./libblah.a'", false}
+    ,{"--implib=../lib/libblah.a", "--implib=../lib/libblah.a", false}
+    ,{"'--implib=../lib/libblah.a'", "'--implib=../lib/libblah.a'", false}
     ,{"files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n", "files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n", false}
     ,{
 "import sys\n"
