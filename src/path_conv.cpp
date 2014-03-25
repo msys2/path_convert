@@ -159,6 +159,7 @@ typedef enum PATH_TYPE_E {
     ESCAPED_PATH,
     ROOTED_PATH,
     POSIX_PATH_LIST,
+    RELATIVE_PATH,
     URL
 } path_type;
 
@@ -330,7 +331,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
     }
 
     if (*it == '.' && (*(it + 1) == '.' || *(it + 1) == '/')) {
-        return SIMPLE_WINDOWS_PATH;
+        return RELATIVE_PATH;
     }
     
     if (*it == '/') {
@@ -438,6 +439,7 @@ void convert_path(const char** from, const char* to, path_type type, char** dst,
         case SIMPLE_WINDOWS_PATH: swp_convert(from, to, dst, dstend); break;
         case ESCAPE_WINDOWS_PATH: ewp_convert(from, to, dst, dstend); break;
         case WINDOWS_PATH_LIST: wpl_convert(from, to, dst, dstend); break;
+        case RELATIVE_PATH: swp_convert(from, to, dst, dstend); break;
         case UNC: unc_convert(from, to, dst, dstend); break;
         case ESCAPED_PATH: ep_convert(from, to, dst, dstend); break;
         case ROOTED_PATH: rp_convert(from, to, dst, dstend); break;
