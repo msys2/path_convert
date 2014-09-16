@@ -374,12 +374,13 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
     int starts_with_minus = (*it == '-');
 
     if (starts_with_minus) {
-        char n2 =      *(it + 2);
+        char n1 =      *(it + 1);
+        char n2 = n1 ? *(it + 2) : '\0';
         char n3 = n2 ? *(it + 3) : '\0';
         char n4 = n3 ? *(it + 4) : '\0';
         char n5 = n4 ? *(it + 5) : '\0';
 
-        if (n2 == '/') {
+        if (isalpha(n1) && n2 == '/') {
             it += 2;
             result = ROOTED_PATH;
         } else if ((n2 == '\'' || n2 == '"') && n3 == '/') {
