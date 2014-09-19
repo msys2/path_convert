@@ -328,6 +328,10 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         if (*(it + 2) == '/' && memchr(it + 2, ':', end - (it + 2)) == NULL) {
             return SIMPLE_WINDOWS_PATH;
         }
+
+        if (*(it + 2) == '/' && memchr(it + 2, ';', end - (it + 2))) {
+            return WINDOWS_PATH_LIST;
+        }
     }
 
     if (*it == '.' && (*(it + 1) == '.' || *(it + 1) == '/')) {
