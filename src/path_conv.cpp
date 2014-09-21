@@ -146,7 +146,7 @@
 #include "path_conv.h"
 
 #ifndef __MSYS__
-static const char* ROOT_PATH = "C:/msys2";
+static const char* ROOT_PATH = "C:/msys32";
 #include <unistd.h>
 #endif
 
@@ -281,10 +281,10 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
             continue;
         }
 
-        if (isspace(*srcit)) {
+       /* if (isspace(*srcit)) {
             sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
             srcbeg = srcit + 1;
-        }
+        }*/
     }
 
     sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
@@ -328,7 +328,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         if (*(it + 2) == '/' && memchr(it + 2, ':', end - (it + 2)) == NULL) {
             return SIMPLE_WINDOWS_PATH;
         }
-
+        
         if (*(it + 2) == '/' && memchr(it + 2, ';', end - (it + 2))) {
             return WINDOWS_PATH_LIST;
         }
@@ -425,7 +425,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
                 } else {
                     return POSIX_PATH_LIST;
                 }
-            } else {
+            } else if (memchr(it2, '=', end - it) == NULL) {
                 return SIMPLE_WINDOWS_PATH;
             }
         }
