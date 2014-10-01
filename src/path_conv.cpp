@@ -281,19 +281,26 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
             continue;
         }
 
-        /*if (isspace(*srcit)) {
-            sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
-            srcbeg = srcit + 1;
-        }*/
+        if (isspace(*srcit)) {
+            //sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
+            //srcbeg = srcit + 1;
+            break;
+        }
     }
 
     sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
+    srcbeg = srcit + 1;
+    for (; *srcit != '\0'; ++srcit) {
+      continue;
+    }
+    copy_to_dst(srcbeg, srcit, &dstit, dstend);
+    *dstit = '\0';
 
-    if (dstit - dst < 2) {
+    /*if (dstit - dst < 2) {
         dstit = dst;
         copy_to_dst(src, NULL, &dstit, dstend);
         *dstit = '\0';
-    }
+    }*/
 
     return dst;
 }

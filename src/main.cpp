@@ -151,7 +151,7 @@ typedef struct test_data_t {
 
 static const test_data datas[] = {
      {"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'C:/msys32/foo bar/boo' PREFIX='/foo bar/boo'", false}
-    ,{"-L'/foo /bar/boo' PREFIX='/foo /bar/boo'", "-L'C:/msys32/foo /bar/boo' PREFIX='C:/msys32/foo /bar/boo'", false}
+    ,{"-L'/foo /bar/boo' PREFIX='/foo /bar/boo'", "-L'C:/msys32/foo /bar/boo' PREFIX='/foo /bar/boo'", false}
     ,{"C:\\foo\\bar", "C:\\foo\\bar", false} // 0
     ,{"/foo/bar;", "/foo/bar;", false} // 1
     ,{"//foobar", "/foobar", false} // 2
