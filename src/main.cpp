@@ -150,7 +150,7 @@ typedef struct test_data_t {
 } test_data;
 
 static const test_data datas[] = {
-    {"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'C:/msys32/foo bar/boo' PREFIX='/foo bar/boo'", false}
+     {"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'C:/msys32/foo bar/boo' PREFIX='/foo bar/boo'", false}
     ,{"-L'/foo /bar/boo' PREFIX='/foo /bar/boo'", "-L'C:/msys32/foo /bar/boo' PREFIX='C:/msys32/foo /bar/boo'", false}
     ,{"C:\\foo\\bar", "C:\\foo\\bar", false} // 0
     ,{"/foo/bar;", "/foo/bar;", false} // 1
@@ -167,7 +167,7 @@ static const test_data datas[] = {
     ,{"-L'/foo bar'", "-L'C:/msys32/foo bar'", false} // 9
     ,{"'/opt /bin'", "'C:/msys32/opt /bin'", false}
     ,{"'/opt files/bin'", "'C:/msys32/opt files/bin'", false}
-    ,{"/", "C:/msys32/", false} // 10
+    ,{"/", "C:/msys32", false} // 10
     ,{"/..", "/..", false} // 11
     ,{"x:x:/x", "x:x:/x", false} // 12
     ,{"x::x:/xx", "x;x;C:\\msys32\\xx", false} // 13
@@ -196,7 +196,7 @@ static const test_data datas[] = {
     ,{"'-foo,/bar'", "'-foo,C:/msys32/bar'", false} // 7
     ,{"'-I/foo,/bar'", "'-I/foo,C:/msys32/bar'", false} // 8
     ,{"'-I/foo'", "'-IC:/msys32/foo'", false} // 9
-    ,{"'/'", "'C:/msys32/'", false} // 10
+    ,{"'/'", "'C:/msys32'", false} // 10
     ,{"'/..'", "'/..'", false} // 11
     ,{"'x:x:/x'", "'x:x:/x'", false} // 12
     ,{"'x::x:/x'", "'x::x:/x'", false} // 13 IT TEST FAILS
@@ -273,6 +273,10 @@ static const test_data datas[] = {
     ,{"-//OASIS//DTD", "-//OASIS//DTD", false}
     ,{"-DCMAKE_INSTALL_PREFIX:PATH=/bb/pkg/mingw", "-DCMAKE_INSTALL_PREFIX:PATH=C:/msys32/bb/pkg/mingw", false}
     ,{"-DCMAKE_INSTALL_PREFIX=/bb/pkg/mingw", "-DCMAKE_INSTALL_PREFIX=C:/msys32/bb/pkg/mingw", false}
+    ,{"foo:echo /bar/baz", "foo:echo /bar/baz", false}
+    ,{"@/foo/bar", "@C:/msys32/foo/bar", false}
+    ,{"'@/foo/bar'", "'@C:/msys32/foo/bar'", false}
+    ,{"///foo/bar", "//foo/bar", false}
     ,{0, 0, false}
 };
 

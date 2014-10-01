@@ -281,7 +281,7 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
             continue;
         }
 
-       /* if (isspace(*srcit)) {
+        /*if (isspace(*srcit)) {
             sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
             srcbeg = srcit + 1;
         }*/
@@ -337,7 +337,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
     if (*it == '.' && (*(it + 1) == '.' || *(it + 1) == '/')) {
         return RELATIVE_PATH;
     }
-    
+
     if (*it == '/') {
         it += 1;
 
@@ -358,7 +358,10 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         if (double_slashed && *it == ':') {
             return URL;
         }
-
+        
+        if (double_slashed && *it == '/') {
+            return ESCAPE_WINDOWS_PATH;
+        }
 
         for (; *it != '\0' && it != end; ++it) {
             switch(*it) {
