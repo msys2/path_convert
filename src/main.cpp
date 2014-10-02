@@ -199,7 +199,7 @@ static const test_data datas[] = {
     ,{"'/'", "'C:/msys32'", false} // 10
     ,{"'/..'", "'/..'", false} // 11
     ,{"'x:x:/x'", "'x:x:/x'", false} // 12
-    ,{"'x::x:/x'", "'x::x:/x'", false} // 13 IT TEST FAILS
+    ,{"'x::x:/x'", "'x;x;X:\\'", false} // 13
     ,{"'-w -- INSTALL_ROOT=C:/Test/ports64'", "'-w -- INSTALL_ROOT=C:/Test/ports64'", false} // 15
     ,{"'-w -- INSTALL_ROOT=C:\\Test\\ports64'", "'-w -- INSTALL_ROOT=C:\\Test\\ports64'", false} // 16
     ,{"'-IC:/Test/ports64'", "'-IC:/Test/ports64'", false} // 17
