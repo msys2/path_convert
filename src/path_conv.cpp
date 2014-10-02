@@ -341,7 +341,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         }
     }
 
-    if (*it == '.' && (*(it + 1) == '.' || *(it + 1) == '/')) {
+    if (*it == '.' && (*(it + 1) == '.' || *(it + 1) == '/')  && memchr(it + 2, ':', end - (it + 2)) == NULL) {
         return RELATIVE_PATH;
     }
 

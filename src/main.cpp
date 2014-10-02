@@ -277,6 +277,12 @@ static const test_data datas[] = {
     ,{"@/foo/bar", "@C:/msys32/foo/bar", false}
     ,{"'@/foo/bar'", "'@C:/msys32/foo/bar'", false}
     ,{"///foo/bar", "//foo/bar", false}
+    ,{".:./", ".;.\\", false}
+    ,{"..:./", "..;.\\", false}
+    ,{"../:./", "..\\;.\\", false}
+    ,{"../:./", "..\\;.\\", false}
+    ,{"../", "../", false}
+    ,{"/foo/bar/", "C:/msys32/foo/bar/", false}
     ,{0, 0, false}
 };
 
