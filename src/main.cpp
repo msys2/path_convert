@@ -167,7 +167,7 @@ static const test_data datas[] = {
     ,{"-L'/foo bar'", "-L'C:/msys32/foo bar'", false} // 9
     ,{"'/opt /bin'", "'C:/msys32/opt /bin'", false}
     ,{"'/opt files/bin'", "'C:/msys32/opt files/bin'", false}
-    ,{"/", "C:/msys32", false} // 10
+    ,{"/", "C:/msys32/", false} // 10
     ,{"/..", "/..", false} // 11
     ,{"x:x:/x", "x:x:/x", false} // 12
     ,{"x::x:/xx", "x;x;C:\\msys32\\xx", false} // 13
@@ -196,7 +196,7 @@ static const test_data datas[] = {
     ,{"'-foo,/bar'", "'-foo,C:/msys32/bar'", false} // 7
     ,{"'-I/foo,/bar'", "'-I/foo,C:/msys32/bar'", false} // 8
     ,{"'-I/foo'", "'-IC:/msys32/foo'", false} // 9
-    ,{"'/'", "'C:/msys32'", false} // 10
+    ,{"'/'", "'C:/msys32/'", false} // 10
     ,{"'/..'", "'/..'", false} // 11
     ,{"'x:x:/x'", "'x:x:/x'", false} // 12
     ,{"'x::x:/x'", "'x;x;X:\\'", false} // 13
@@ -275,14 +275,19 @@ static const test_data datas[] = {
     ,{"-DCMAKE_INSTALL_PREFIX=/bb/pkg/mingw", "-DCMAKE_INSTALL_PREFIX=C:/msys32/bb/pkg/mingw", false}
     ,{"foo:echo /bar/baz", "foo:echo /bar/baz", false}
     ,{"@/foo/bar", "@C:/msys32/foo/bar", false}
+    ,{"@/foo/bar@", "@C:/msys32/foo/bar@", false}
     ,{"'@/foo/bar'", "'@C:/msys32/foo/bar'", false}
     ,{"///foo/bar", "//foo/bar", false}
     ,{".:./", ".;.\\", false}
     ,{"..:./", "..;.\\", false}
     ,{"../:./", "..\\;.\\", false}
     ,{"../:./", "..\\;.\\", false}
+    ,{"../aa/:./", "..\\aa\\;.\\", false}
     ,{"../", "../", false}
     ,{"/foo/bar/", "C:/msys32/foo/bar/", false}
+    ,{"-MExtUtils::ParseXS=process_file", "-MExtUtils::ParseXS=process_file", false}
+    ,{"ExtUtils::ParseXS::process_file(filename => \"$<\", output => \"$@\", typemap => \"$(PURPLE_PERL_TOP)/common/typemap\");",
+      "ExtUtils::ParseXS::process_file(filename => \"$<\", output => \"$@\", typemap => \"$(PURPLE_PERL_TOP)/common/typemap\");", false}
     ,{0, 0, false}
 };
 
