@@ -225,6 +225,8 @@ static const test_data datas[] = {
     ,{"'--implib=./libblah.a'", "'--implib=./libblah.a'", false}
     ,{"--implib=../lib/libblah.a", "--implib=../lib/libblah.a", false}
     ,{"'--implib=../lib/libblah.a'", "'--implib=../lib/libblah.a'", false}
+    //,{"    /foo", "    C:/msys32/foo", false}
+    //,{"'    /foo'", "'    C:/msys32/foo'", false}
     //,{"files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n", "files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n", false}
     ,{
 "import sys\n"
