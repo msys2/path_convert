@@ -161,7 +161,7 @@ arg_heuristic_with_exclusions (char const * const arg, char const * exclusions, 
   else if (arg[0] == '/' && isabswinpath (arg + 1)) {
       retpathcpy (&arg[1]);
       return ScrubRetpath (retpath);
-  
+  }
   //
   // Check for variable set.
   //
