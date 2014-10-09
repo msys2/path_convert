@@ -290,6 +290,8 @@ static const test_data datas[] = {
     ,{"../", "../", false}
     ,{"/foo/bar/", "C:/msys32/foo/bar/", false}
     ,{"-MExtUtils::ParseXS=process_file", "-MExtUtils::ParseXS=process_file", false}
+    ,{"/foo/bin/../libs", "C:/msys32/foo/bin/../libs", false}
+    ,{"'/foo/bin/../libs'", "'C:/msys32/foo/bin/../libs'", false}
     ,{"ExtUtils::ParseXS::process_file(filename => \"$<\", output => \"$@\", typemap => \"$(PURPLE_PERL_TOP)/common/typemap\");",
       "ExtUtils::ParseXS::process_file(filename => \"$<\", output => \"$@\", typemap => \"$(PURPLE_PERL_TOP)/common/typemap\");", false}
     ,{0, 0, false}
