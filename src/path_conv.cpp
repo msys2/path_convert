@@ -331,7 +331,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
 
     if (*it == '\0' || it == end) return NONE;
 
-    if (!isalpha(*it) && *it != '/' && *it != '\\' && *it != ':' && *it != '-' && *it != '.') {
+    if (!isalnum(*it) && *it != '/' && *it != '\\' && *it != ':' && *it != '-' && *it != '.') {
         return find_path_start_and_type(move(src, 1), true, end);
     }
 
@@ -428,7 +428,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
             return find_path_start_and_type(src, true, end);
         }
 
-        if (ch == ',' && starts_with_minus) {
+        if (ch == ',' /*&& starts_with_minus*/) {
             *src = it2 + 1;
             return find_path_start_and_type(src, true, end);
         }

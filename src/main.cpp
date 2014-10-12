@@ -150,7 +150,7 @@ typedef struct test_data_t {
 } test_data;
 
 static const test_data datas[] = {
-     {"//Collection:http://tfsserver", "//Collection:http://tfsserver", false}
+    {"//Collection:http://tfsserver", "//Collection:http://tfsserver", false}
     ,{"/Collection:http://tfsserver", "/Collection:http://tfsserver", false}
     ,{"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'C:/msys32/foo bar/boo' PREFIX='/foo bar/boo'", false}
     ,{"-L'/foo /bar/boo' PREFIX='/foo /bar/boo'", "-L'C:/msys32/foo /bar/boo' PREFIX='/foo /bar/boo'", false}
@@ -294,6 +294,9 @@ static const test_data datas[] = {
     ,{"'/foo/bin/../libs'", "'C:/msys32/foo/bin/../libs'", false}
     ,{"ExtUtils::ParseXS::process_file(filename => \"$<\", output => \"$@\", typemap => \"$(PURPLE_PERL_TOP)/common/typemap\");",
       "ExtUtils::ParseXS::process_file(filename => \"$<\", output => \"$@\", typemap => \"$(PURPLE_PERL_TOP)/common/typemap\");", false}
+    ,{"-Wl,test/path", "-Wl,test/path", false}
+    ,{"-Wl,/test/path", "-Wl,C:/msys32/test/path", false}
+    ,{"-Wl,--out-implib,64/shlib/libgcc_s.a.tmp", "-Wl,--out-implib,64/shlib/libgcc_s.a.tmp", false}
     ,{0, 0, false}
 };
 
