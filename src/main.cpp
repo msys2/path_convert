@@ -150,7 +150,8 @@ typedef struct test_data_t {
 } test_data;
 
 static const test_data datas[] = {
-    {"//Collection:http://tfsserver", "//Collection:http://tfsserver", false}
+    {"-LIBPATH:../lib", "-LIBPATH:../lib", false}
+    ,{"//Collection:http://tfsserver", "//Collection:http://tfsserver", false}
     ,{"/Collection:http://tfsserver", "/Collection:http://tfsserver", false}
     ,{"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'C:/msys32/foo bar/boo' PREFIX='/foo bar/boo'", false}
     ,{"-L'/foo /bar/boo' PREFIX='/foo /bar/boo'", "-L'C:/msys32/foo /bar/boo' PREFIX='/foo /bar/boo'", false}
@@ -297,6 +298,8 @@ static const test_data datas[] = {
     ,{"-Wl,test/path", "-Wl,test/path", false}
     ,{"-Wl,/test/path", "-Wl,C:/msys32/test/path", false}
     ,{"-Wl,--out-implib,64/shlib/libgcc_s.a.tmp", "-Wl,--out-implib,64/shlib/libgcc_s.a.tmp", false}
+    ,{"-Wl,--out-implib,_64/shlib/libgcc_s.a.tmp", "-Wl,--out-implib,_64/shlib/libgcc_s.a.tmp", false}
+    ,{"/64/shlib/libgcc_s.a.tmp", "C:/msys32/64/shlib/libgcc_s.a.tmp", false}
     ,{0, 0, false}
 };
 
