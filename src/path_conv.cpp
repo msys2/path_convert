@@ -392,9 +392,18 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         return ROOTED_PATH;
     }
 
-    int starts_with_minus = (*it == '-');
+    int starts_with_minus = 0;
+    int starts_with_minus_alpha = 0;
+    if (*it == '-') {
+      starts_with_minus = 1;
+      it += 1;
+      if (isalpha(*it)) {
+        it += 1;
+        starts_with_minus_alpha = 1;
+      }
+    }
 
-    if (starts_with_minus) {
+    /*if (starts_with_minus) {
         char n1 =      *(it + 1);
         char n2 = n1 ? *(it + 2) : '\0';
         char n3 = n2 ? *(it + 3) : '\0';
@@ -420,13 +429,23 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
             starts_with_minus = false;
             return SIMPLE_WINDOWS_PATH;
         }
-    }
+    }*/
 
     for (const char* it2 = it; *it2 != '\0' && it2 != end; ++it2) {
         char ch = *it2;
+        if (starts_with_minus_alpha) {
+            if (isalpha(ch) && (*(it2+1) == ':') && (*(it2+2) == '/')) {
+                return SIMPLE_WINDOWS_PATH;
+            }
+            if (ch == '/'&& memchr(it2, ',', end - it) == NULL) {
+                *src = it2;
+                return find_path_start_and_type(src, true, end);
+            }
+            starts_with_minus_alpha = 0;
+        }
         if (ch == '\'' || ch == '"')
             starts_with_minus = false;
-        if ((ch == '=') || (ch == ':' && starts_with_minus) || ((ch == '\'' || ch == '"') && result == NONE)) {
+        if ((ch == '=') || (ch == ':' && starts_with_minus) || ch == '\'' || ch == '"') {
             *src = it2 + 1;
             return find_path_start_and_type(src, true, end);
         }

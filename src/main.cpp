@@ -151,6 +151,7 @@ typedef struct test_data_t {
 
 static const test_data datas[] = {
     {"-LIBPATH:../lib", "-LIBPATH:../lib", false}
+    ,{"-LIBPATH:../lib:/tmp", "-LIBPATH:..\\lib;C:\\msys32\\tmp", false}
     ,{"//Collection:http://tfsserver", "//Collection:http://tfsserver", false}
     ,{"/Collection:http://tfsserver", "/Collection:http://tfsserver", false}
     ,{"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'C:/msys32/foo bar/boo' PREFIX='/foo bar/boo'", false}
@@ -182,6 +183,7 @@ static const test_data datas[] = {
     ,{"/tmp:/tmp", "C:\\msys32\\tmp;C:\\msys32\\tmp", false} // 14
     ,{"'/tmp:/tmp'", "'C:\\msys32\\tmp;C:\\msys32\\tmp'", false} // 14
     ,{"-L'/tmp:/tmp'", "-L'C:\\msys32\\tmp;C:\\msys32\\tmp'", false} // 14
+    ,{"-L/tmp:/tmp", "-LC:\\msys32\\tmp;C:\\msys32\\tmp", false} // 14
     ,{"'/bin:/Program Files:/lib'", "'C:\\msys32\\usr\\bin;C:\\msys32\\Program Files;C:\\msys32\\lib'", false}
     ,{"'-L/opt /bin'", "'-LC:/msys32/opt /bin'", false}
     ,{"-w -- INSTALL_ROOT=C:/Test/ports64", "-w -- INSTALL_ROOT=C:/Test/ports64", false} // 15
