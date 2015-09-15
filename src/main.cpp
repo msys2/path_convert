@@ -344,7 +344,7 @@ int main() {
         total += 1;
         const char *path = it->src;
         const size_t blen = strlen(it->dst)*2 + 10;
-        char *buf = (char*)malloc(blen);
+        char *buf = (char*)malloc(blen + 1);
         litter_buffer(buf, blen);
 
         const char *res = convert(buf, blen, path);
