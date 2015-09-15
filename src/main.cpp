@@ -149,12 +149,21 @@ typedef struct test_data_t {
     bool fail;
 } test_data;
 
+#ifdef MSYSROOT
+#ifndef MSYSROOT2
+#error "Need to define both MSYSROOT and MSYSROOT2, or neither"
+#endif
+#else
+#ifdef MSYSROOT
+#error "Need to define both MSYSROOT and MSYSROOT2, or neither"
+#endif
 #if defined(__MSYS__) && defined(__LP64__)
 #define MSYSROOT "C:\\msys64"
 #define MSYSROOT2 "C:/msys64"
 #else
 #define MSYSROOT "C:\\msys32"
 #define MSYSROOT2 "C:/msys32"
+#endif
 #endif
 
 static const test_data datas[] = {
