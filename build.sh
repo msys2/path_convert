@@ -6,6 +6,9 @@ MSYSROOT="$(echo "$MSYSROOT2" | sed 's/\//\\\\/g')" || {
 	exit 1
 }
 
+MSYSROOT=${MSYSROOT%\\\\}
+MSYSROOT2=${MSYSROOT2%/}
+
 mkdir -p $PWD/build
 CXXFLAGS="-O0 -ggdb -DMSYSROOT=\"$MSYSROOT\" -DMSYSROOT2=\"$MSYSROOT2\""
 g++ $CXXFLAGS -c -o $PWD/build/path_conv.o $PWD/src/path_conv.cpp && \

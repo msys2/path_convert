@@ -402,6 +402,9 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         it += 1;
         starts_with_minus_alpha = 1;
       }
+      if (memchr(it, ';', end - it)) {
+            return WINDOWS_PATH_LIST;
+        }
     }
 
     /*if (starts_with_minus) {

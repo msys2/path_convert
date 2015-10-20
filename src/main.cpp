@@ -319,6 +319,8 @@ static const test_data datas[] = {
     ,{"-Wl,--out-implib,64/shlib/libgcc_s.a.tmp", "-Wl,--out-implib,64/shlib/libgcc_s.a.tmp", false}
     ,{"-Wl,--out-implib,_64/shlib/libgcc_s.a.tmp", "-Wl,--out-implib,_64/shlib/libgcc_s.a.tmp", false}
     ,{"/64/shlib/libgcc_s.a.tmp", "" MSYSROOT2 "/64/shlib/libgcc_s.a.tmp", false}
+    ,{"-DVERSION_SOURCES=VERSION;C:/repo/mingw-w64-innoextract/src/innoextract-1.5/VERSION;LICENSE;C:/repo/mingw-w64-innoextract/src/innoextract-1.5/LICENSE", "-DVERSION_SOURCES=VERSION;C:/repo/mingw-w64-innoextract/src/innoextract-1.5/VERSION;LICENSE;C:/repo/mingw-w64-innoextract/src/innoextract-1.5/LICENSE", false}
+    ,{"'-DVERSION_SOURCES=VERSION;C:/repo/mingw-w64-innoextract/src/innoextract-1.5/VERSION;LICENSE;C:/repo/mingw-w64-innoextract/src/innoextract-1.5/LICENSE'", "'-DVERSION_SOURCES=VERSION;C:/repo/mingw-w64-innoextract/src/innoextract-1.5/VERSION;LICENSE;C:/repo/mingw-w64-innoextract/src/innoextract-1.5/LICENSE'", false}
     ,{0, 0, false}
 };
 
