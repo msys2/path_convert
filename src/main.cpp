@@ -168,7 +168,7 @@ typedef struct test_data_t {
 
 static const test_data datas[] = {
     {"-LIBPATH:../lib", "-LIBPATH:../lib", false}
-    ,{"-LIBPATH:../lib:/tmp", "-LIBPATH:..\\lib;" MSYSROOT "\\tmp", false}
+    ,{"-LIBPATH:../lib:/var", "-LIBPATH:..\\lib;" MSYSROOT "\\var", false}
     ,{"//Collection:http://tfsserver", "//Collection:http://tfsserver", false}
     ,{"/Collection:http://tfsserver", "/Collection:http://tfsserver", false}
     ,{"-L'/foo bar/boo' PREFIX='/foo bar/boo'", "-L'" MSYSROOT2 "/foo bar/boo' PREFIX='/foo bar/boo'", false}
@@ -197,10 +197,10 @@ static const test_data datas[] = {
     ,{"'x::/x z:x'", "'x;" MSYSROOT "\\x z;x'", false} // 14
     ,{"/dev/null", "nul", false} // 14
     ,{"'/dev/null'", "'nul'", false} // 14
-    ,{"/tmp:/tmp", MSYSROOT "\\tmp;" MSYSROOT "\\tmp", false} // 14
-    ,{"'/tmp:/tmp'", "'" MSYSROOT "\\tmp;" MSYSROOT "\\tmp'", false} // 14
-    ,{"-L'/tmp:/tmp'", "-L'" MSYSROOT "\\tmp;" MSYSROOT "\\tmp'", false} // 14
-    ,{"-L/tmp:/tmp", "-L" MSYSROOT "\\tmp;" MSYSROOT "\\tmp", false} // 14
+    ,{"/var:/var", MSYSROOT "\\var;" MSYSROOT "\\var", false} // 14
+    ,{"'/var:/var'", "'" MSYSROOT "\\var;" MSYSROOT "\\var'", false} // 14
+    ,{"-L'/var:/var'", "-L'" MSYSROOT "\\var;" MSYSROOT "\\var'", false} // 14
+    ,{"-L/var:/var", "-L" MSYSROOT "\\var;" MSYSROOT "\\var", false} // 14
     ,{"'/bin:/Program Files:/lib'", "'" MSYSROOT "\\usr\\bin;" MSYSROOT "\\Program Files;" MSYSROOT "\\lib'", false}
     ,{"'-L/opt /bin'", "'-L" MSYSROOT2 "/opt /bin'", false}
     ,{"-w -- INSTALL_ROOT=C:/Test/ports64", "-w -- INSTALL_ROOT=C:/Test/ports64", false} // 15
