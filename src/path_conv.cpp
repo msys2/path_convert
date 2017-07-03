@@ -302,7 +302,7 @@ const char* convert(char *dst, size_t dstlen, const char *src) {
     sub_convert(&srcbeg, &srcit, &dstit, dstend, &in_string);
     srcbeg = srcit + 1;
     for (; *srcit != '\0'; ++srcit) {
-      continue;
+        continue;
     }
     copy_to_dst(srcbeg, srcit, &dstit, dstend);
     *dstit = '\0';
@@ -346,7 +346,7 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         if (*(it + 2) == '/' && memchr(it + 2, ':', end - (it + 2)) == NULL) {
             return SIMPLE_WINDOWS_PATH;
         }
-        
+
         if (*(it + 2) == '/' && memchr(it + 2, ';', end - (it + 2))) {
             return WINDOWS_PATH_LIST;
         }
@@ -370,19 +370,25 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
         if (*it == '/') {
             it += 1;
             switch(*it) {
-              case ':': return URL;
-              case '/': return ESCAPED_PATH;
+            case ':':
+                return URL;
+            case '/':
+                return ESCAPED_PATH;
             }
             if (memchr(it, '/', end - it))
-              return UNC;
+                return UNC;
             else
-              return ESCAPED_PATH;
+                return ESCAPED_PATH;
         }
 
         for (; *it != '\0' && it != end; ++it) {
             switch(*it) {
-                case ':': {char ch = *(it + 1); if (ch == '/' || ch == ':' || ch == '.') return POSIX_PATH_LIST;}
-                case ';': return WINDOWS_PATH_LIST;
+            case ':': {
+                char ch = *(it + 1);
+                if (ch == '/' || ch == ':' || ch == '.') return POSIX_PATH_LIST;
+            }
+            case ';':
+                return WINDOWS_PATH_LIST;
             }
         }
 
@@ -396,13 +402,13 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
     int starts_with_minus = 0;
     int starts_with_minus_alpha = 0;
     if (*it == '-') {
-      starts_with_minus = 1;
-      it += 1;
-      if (isalpha(*it)) {
+        starts_with_minus = 1;
         it += 1;
-        starts_with_minus_alpha = 1;
-      }
-      if (memchr(it, ';', end - it)) {
+        if (isalpha(*it)) {
+            it += 1;
+            starts_with_minus_alpha = 1;
+        }
+        if (memchr(it, ';', end - it)) {
             return WINDOWS_PATH_LIST;
         }
     }
@@ -484,18 +490,36 @@ path_type find_path_start_and_type(const char** src, int recurse, const char* en
 
 void convert_path(const char** from, const char* to, path_type type, char** dst, const char* dstend) {
     switch(type) {
-        case SIMPLE_WINDOWS_PATH: swp_convert(from, to, dst, dstend); break;
-        case ESCAPE_WINDOWS_PATH: ewp_convert(from, to, dst, dstend); break;
-        case WINDOWS_PATH_LIST: wpl_convert(from, to, dst, dstend); break;
-        case RELATIVE_PATH: swp_convert(from, to, dst, dstend); break;
-        case UNC: unc_convert(from, to, dst, dstend); break;
-        case ESCAPED_PATH: ep_convert(from, to, dst, dstend); break;
-        case ROOTED_PATH: rp_convert(from, to, dst, dstend); break;
-        case URL: url_convert(from, to, dst, dstend); break;
-        case POSIX_PATH_LIST: ppl_convert(from, to, dst, dstend); break;
-        case NONE: // prevent warnings;
-        default:
-                return;
+    case SIMPLE_WINDOWS_PATH:
+        swp_convert(from, to, dst, dstend);
+        break;
+    case ESCAPE_WINDOWS_PATH:
+        ewp_convert(from, to, dst, dstend);
+        break;
+    case WINDOWS_PATH_LIST:
+        wpl_convert(from, to, dst, dstend);
+        break;
+    case RELATIVE_PATH:
+        swp_convert(from, to, dst, dstend);
+        break;
+    case UNC:
+        unc_convert(from, to, dst, dstend);
+        break;
+    case ESCAPED_PATH:
+        ep_convert(from, to, dst, dstend);
+        break;
+    case ROOTED_PATH:
+        rp_convert(from, to, dst, dstend);
+        break;
+    case URL:
+        url_convert(from, to, dst, dstend);
+        break;
+    case POSIX_PATH_LIST:
+        ppl_convert(from, to, dst, dstend);
+        break;
+    case NONE: // prevent warnings;
+    default:
+        return;
     }
 }
 

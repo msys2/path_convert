@@ -249,47 +249,49 @@ static const test_data datas[] = {
     //,{"'    /foo'", "'    " MSYSROOT2 "/foo'", false}
     //,{"files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n", "files = '''__init__.py z/codegen.py b/codegen_main.py codegen_docbook.py config.py dbustypes.py parser.py utils.py''' \n", false}
     ,{
-"import sys\n"
-"import os\n"
-"\n"
-"def main():\n"
-"    print sys.argv\n"
-"    print os.path.exists('some/path')\n"
-"    print os.path.exists('/some/path')\n"
-"\n"
-"if __name__ == '__main__':\n"
-"    main()\n",
-"import sys\n"
-"import os\n"
-"\n"
-"def main():\n"
-"    print sys.argv\n"
-"    print os.path.exists('some/path')\n"
-"    print os.path.exists('/some/path')\n"
-"\n"
-"if __name__ == '__main__':\n"
-"    main()\n", false}
+        "import sys\n"
+        "import os\n"
+        "\n"
+        "def main():\n"
+        "    print sys.argv\n"
+        "    print os.path.exists('some/path')\n"
+        "    print os.path.exists('/some/path')\n"
+        "\n"
+        "if __name__ == '__main__':\n"
+        "    main()\n",
+        "import sys\n"
+        "import os\n"
+        "\n"
+        "def main():\n"
+        "    print sys.argv\n"
+        "    print os.path.exists('some/path')\n"
+        "    print os.path.exists('/some/path')\n"
+        "\n"
+        "if __name__ == '__main__':\n"
+        "    main()\n", false
+    }
     ,{
-"import sys\n"
-"import os\n"
-"\n"
-"def main():\n"
-"    print sys.argv\n"
-"    print os.path.exists('some/path')\n"
-"    print os.path.exists('/some/path')\n"
-"\n"
-"if __name__ == '__main__':\n"
-"    main()\n",
-"import sys\n"
-"import os\n"
-"\n"
-"def main():\n"
-"    print sys.argv\n"
-"    print os.path.exists('some/path')\n"
-"    print os.path.exists('/some/path')\n"
-"\n"
-"if __name__ == '__main__':\n"
-"    main()\n", true}
+        "import sys\n"
+        "import os\n"
+        "\n"
+        "def main():\n"
+        "    print sys.argv\n"
+        "    print os.path.exists('some/path')\n"
+        "    print os.path.exists('/some/path')\n"
+        "\n"
+        "if __name__ == '__main__':\n"
+        "    main()\n",
+        "import sys\n"
+        "import os\n"
+        "\n"
+        "def main():\n"
+        "    print sys.argv\n"
+        "    print os.path.exists('some/path')\n"
+        "    print os.path.exists('/some/path')\n"
+        "\n"
+        "if __name__ == '__main__':\n"
+        "    main()\n", true
+    }
     ,{"E:/msys64/home/Wayne/src/kicad/product/common/gal/opengl/shader.vert;E:/msys64/home/Wayne/src/kicad/product/common/gal/opengl/shader.frag", "E:/msys64/home/Wayne/src/kicad/product/common/gal/opengl/shader.vert;E:/msys64/home/Wayne/src/kicad/product/common/gal/opengl/shader.frag", false}
     ,{"'E:/msys64/home/Wayne/src/kicad/product/common/gal/opengl/shader.vert;E:/msys64/home/Wayne/src/kicad/product/common/gal/opengl/shader.frag'", "'E:/msys64/home/Wayne/src/kicad/product/common/gal/opengl/shader.vert;E:/msys64/home/Wayne/src/kicad/product/common/gal/opengl/shader.frag'", false}
     ,{"-IC:/msys64/mingw64/include", "-IC:/msys64/mingw64/include", false}
@@ -313,7 +315,8 @@ static const test_data datas[] = {
     ,{"/foo/bin/../libs", "" MSYSROOT2 "/foo/bin/../libs", false}
     ,{"'/foo/bin/../libs'", "'" MSYSROOT2 "/foo/bin/../libs'", false}
     ,{"ExtUtils::ParseXS::process_file(filename => \"$<\", output => \"$@\", typemap => \"$(PURPLE_PERL_TOP)/common/typemap\");",
-      "ExtUtils::ParseXS::process_file(filename => \"$<\", output => \"$@\", typemap => \"$(PURPLE_PERL_TOP)/common/typemap\");", false}
+        "ExtUtils::ParseXS::process_file(filename => \"$<\", output => \"$@\", typemap => \"$(PURPLE_PERL_TOP)/common/typemap\");", false
+    }
     ,{"-Wl,test/path", "-Wl,test/path", false}
     ,{"-Wl,/test/path", "-Wl," MSYSROOT2 "/test/path", false}
     ,{"-Wl,--out-implib,64/shlib/libgcc_s.a.tmp", "-Wl,--out-implib,64/shlib/libgcc_s.a.tmp", false}
@@ -330,12 +333,24 @@ const char* escape(const char* str, char* dst) {
     char* tmp = dst;
     for (; str != NULL && *str != '\0'; ++str) {
         switch(*str) {
-            case '\r': *(tmp++) = '\\'; *(tmp++)='r'; break;
-            case '\n': *(tmp++) = '\\'; *(tmp++)='n'; break;
-            case '\b': *(tmp++) = '\\'; *(tmp++)='b'; break;
-            case '\t': *(tmp++) = '\\'; *(tmp++)='t'; break;
-            default:
-                    *(tmp++) = *str;
+        case '\r':
+            *(tmp++) = '\\';
+            *(tmp++)='r';
+            break;
+        case '\n':
+            *(tmp++) = '\\';
+            *(tmp++)='n';
+            break;
+        case '\b':
+            *(tmp++) = '\\';
+            *(tmp++)='b';
+            break;
+        case '\t':
+            *(tmp++) = '\\';
+            *(tmp++)='t';
+            break;
+        default:
+            *(tmp++) = *str;
         }
     }
     *tmp = '\0';
