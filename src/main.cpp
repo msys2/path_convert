@@ -201,7 +201,7 @@ static const test_data datas[] = {
     ,{"'/var:/var'", "'" MSYSROOT "\\var;" MSYSROOT "\\var'", false} // 14
     ,{"-L'/var:/var'", "-L'" MSYSROOT "\\var;" MSYSROOT "\\var'", false} // 14
     ,{"-L/var:/var", "-L" MSYSROOT "\\var;" MSYSROOT "\\var", false} // 14
-    ,{"'/bin:/Program Files:/lib'", "'" MSYSROOT "\\bin;" MSYSROOT "\\Program Files;" MSYSROOT "\\lib'", false}
+    ,{"'/bin:/Program Files:/lib'", "'" MSYSROOT "\\usr\\bin;" MSYSROOT "\\Program Files;" MSYSROOT "\\lib'", false}
     ,{"'-L/opt /bin'", "'-L" MSYSROOT2 "/opt /bin'", false}
     ,{"-w -- INSTALL_ROOT=C:/Test/ports64", "-w -- INSTALL_ROOT=C:/Test/ports64", false} // 15
     ,{"-w -- INSTALL_ROOT=C:\\Test\\ports64", "-w -- INSTALL_ROOT=C:\\Test\\ports64", false} // 16
