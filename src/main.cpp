@@ -392,7 +392,7 @@ int main() {
         free(buf);
     }
 
-    printf("%f\n", (float)passed / total);
+    printf("%d out of %d passed, %d failed\n", passed, total, total - passed);
 
     return total != passed;
 }

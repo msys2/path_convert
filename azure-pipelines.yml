@@ -1,0 +1,35 @@
+jobs:
+  - job: MSYS
+    timeoutInMinutes: 360
+    pool:
+      vmImage: vs2017-win2016
+    strategy:
+      maxParallel: 5
+      matrix:
+        i686:
+          MSYS_DIR: msys32
+          BASE_REPO: msys2-ci-base-i686
+        x86_64:
+          MSYS_DIR: msys64
+          BASE_REPO: msys2-ci-base
+    steps:
+      - script: |
+          git clone https://github.com/msys2/$(BASE_REPO).git %CD:~0,2%\$(MSYS_DIR)
+        displayName: Install MSYS2
+      - script: |
+          set PATH=%CD:~0,2%\$(MSYS_DIR)\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem
+          %CD:~0,2%\$(MSYS_DIR)\usr\bin\pacman --noconfirm -Syyuu
+          %CD:~0,2%\$(MSYS_DIR)\usr\bin\pacman --noconfirm -Syuu
+        displayName: Update MSYS2
+      - script: |
+          set PATH=%CD:~0,2%\$(MSYS_DIR)\usr\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem
+          %CD:~0,2%\$(MSYS_DIR)\usr\bin\pacman --noconfirm --needed -S git base base-devel msys2-devel
+          %CD:~0,2%\$(MSYS_DIR)\usr\bin\dash /usr/bin/rebaseall -p
+        displayName: Install Toolchain
+      - script: |
+          set PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem
+          %CD:~0,2%\$(MSYS_DIR)\usr\bin\bash -lc "bash build.sh"
+        displayName: CI-Build
+        env:
+          MSYSTEM: MSYS
+          CHERE_INVOKING: yes
