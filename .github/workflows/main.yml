@@ -1,0 +1,20 @@
+on: [push, pull_request]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: setup-msys2
+        uses: msys2/setup-msys2@v1
+        with:
+          msystem: MSYS
+          update: true
+          install: git base-devel msys2-devel
+
+      - name: CI-Build
+        shell: msys2 {0}
+        run: |
+          ./build.sh
