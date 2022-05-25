@@ -167,7 +167,8 @@ typedef struct test_data_t {
 #endif
 
 static const test_data datas[] = {
-    {"-LIBPATH:../lib", "-LIBPATH:../lib", false}
+    {"/usr/lib:/var:", MSYSROOT "\\usr\\lib;" MSYSROOT "\\var;", false}
+    ,{"-LIBPATH:../lib", "-LIBPATH:../lib", false}
     ,{"-LIBPATH:../lib:/var", "-LIBPATH:..\\lib;" MSYSROOT "\\var", false}
     ,{"//Collection:http://tfsserver", "//Collection:http://tfsserver", false}
     ,{"/Collection:http://tfsserver", "/Collection:http://tfsserver", false}
@@ -231,7 +232,7 @@ static const test_data datas[] = {
     ,{"'x::http://google.ru:x'", "'x;http://google.ru;x'", false} // 8
     ,{"", "", false}
     ,{"''", "''", false}
-    ,{"/usr/local/info:/usr/share/info:/usr/info:", MSYSROOT "\\usr\\local\\info;" MSYSROOT "\\usr\\share\\info;" MSYSROOT "\\usr\\info", false}
+    ,{"/usr/local/info:/usr/share/info:/usr/info:", MSYSROOT "\\usr\\local\\info;" MSYSROOT "\\usr\\share\\info;" MSYSROOT "\\usr\\info;", false}
     ,{"as_nl=\r", "as_nl=\r", false}
     ,{"as_nl=\n", "as_nl=\n", false}
     ,{"as_nl= ", "as_nl= ", false}
