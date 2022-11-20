@@ -654,7 +654,7 @@ void posix_to_win32_path(const char* from, const char* to, char** dst, const cha
         strncpy(one_path, from, to-from);
         one_path[to-from] = '\0';
         char win32_path1[PATH_MAX + 1];
-        ssize_t result = cygwin_conv_path(CCP_POSIX_TO_WIN_A|CCP_ABSOLUTE, one_path, win32_path1, PATH_MAX+1);
+        ssize_t result = cygwin_conv_path(CCP_POSIX_TO_WIN_A|CCP_RELATIVE, one_path, win32_path1, PATH_MAX+1);
         printf("called cygwin_conv_path(CCP_POSIX_TO_WIN_A,%s -> %s, in-size %d, result = %zd\n", one_path, win32_path1, PATH_MAX+1, result);
         if( result !=0 ) {
             copy_to_dst(one_path, NULL, dst, dstend);
